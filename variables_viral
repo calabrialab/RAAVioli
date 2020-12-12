@@ -1,0 +1,12 @@
+bwa_mem_k=18
+bwa_mem_r=2
+bwa_mem_A=1
+bwa_mem_T=10
+bwa_mem_d=10000
+bwa_mem_B=2
+bwa_mem_O=1
+bwa_mem_E=1
+bwa_mem_L=0
+sam_view_q=6
+bam_filter_AS=50
+SPEC="AAV.withBackbone"

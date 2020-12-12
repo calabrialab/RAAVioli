@@ -1,0 +1,18 @@
+# History files
+.Rhistory
+.Rapp.history
+
+# Session Data files
+.RData
+
+# User-specific files
+.Ruserdata
+
+# Output files from R CMD check
+/*.Rcheck/
+
+# Config.txt
+config.txt
+
+# Installed missing tools dir
+bin/
