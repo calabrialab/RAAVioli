@@ -1,10 +1,10 @@
-# RAAVen
+# RAAVioli
 Bioinformatics pipeline for AAV integration sites and viral rearrangements
 ### Install
 Run ./setup.sh it will check if all requirements are installed otherwise it will try to install the missing ones in the bin directory.
 A *config.txt* with all needed paths will be created. We suggest to add the installation dir to the system path so you can run the pipeline from anywhere on your system. You can do this using:  
 ```
-export PATH:$PATH:/path/to/RAAVen
+export PATH:$PATH:/path/to/RAAVioli
 ```
 (note that this is not permanently)
 For the same reason we suggest to specify all paths to parameters.
