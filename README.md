@@ -1,23 +1,53 @@
 # RAAVioli
-Recombinant AAV integration analysis: Bioinformatics pipeline for AAV integration sites and viral rearrangements analysis
+Bioinformatics pipeline for AAV integration sites and viral rearrangements
+## Requirements
+Mandatory
+```
+Python2
+R>=3.6
+Ruby
+CMake>=3.11
+```
+The setup will try to install the following tools:
+```
+bwa
+samtools-1.9
+bamtools
+bedtools-2.29.1
+fastx_toolkit_0.0.13
+```
 ### Install
-Run ./setup.sh it will check if all requirements are installed otherwise it will try to install the missing ones in the bin directory.
-A *config.txt* with all needed paths will be created. We suggest to add the installation dir to the system path so you can run the pipeline from anywhere on your system. You can do this using:  
+Clone the repository and run the setup.sh.
 ```
-export PATH:$PATH:/path/to/RAAVioli
+git clone https://github.com/calabrialab/RAAVioli.git
+cd RAAVioli
+chmod +x setup.sh RAAVioli.sh
+./setup.sh
+
 ```
-(note that this is not permanently)
-For the same reason we suggest to specify all paths to parameters.
+it will install all the required tools in the bin sub-directory.
+A *config.txt* with all needed paths will be created. 
+In case of errors please check the *error.log files to see whetever an error has occured during the installation of the tools needed.
+
 ## Usage
-**The Viral genome must be a single sequence named chrV. This is a must for later steps so please do it.**
-Sample usage
+Run the pipeline from the installation dir.  
+**The Viral genome must be a single sequence named chrV. This is a must for later steps.**  
+The entry point is a .tsv file containing info about the pools and as last column the path to the fastq.gz file. It can contain multiple files. E.g.
 ```
-./pipeline.sh -i sample_label.tsv -t threads -v viral_genome.fa -r reference.fa
-               -R 1 -A annotation.bed -o output_dir -m mixed_genome.fa
+sample	sample_label	sample_name	sample_source	path
+sample1	InVivo1	B01	B01	path/to/sample1.fastq.gz
+sample2	InVivo2	B02	B02	path/to/sample2.fastq.gz
+```
+This file is included into the repository. You can modify it or copy it elsewhere.  
+
+Sample usage:
+```
+./RAAVioli.sh -i sample_label.tsv -t threads -v viral_genome.fa -r reference.fa
+               -R 1 -a annotation.gtf -o output_dir -m mixed_genome.fa
 
 
-Sample usage: ./pipeline.sh -i sample_label.tsv -t threads -v viral_genome.fa -r reference.fa\
-                            -R 1 -A annotation.bed -o output_dir -m mixed_genome.fa
+Sample usage: ./RAAVioli.sh -i sample_label.tsv -t threads -v viral_genome.fa -r reference.fa\
+                            -R 1 -a annotation.gtf -o output_dir -m mixed_genome.fa
 
 
 	-i the .tsv file with the paths to fastq files as last column.
@@ -63,11 +93,11 @@ Sample usage: ./pipeline.sh -i sample_label.tsv -t threads -v viral_genome.fa -r
 	-M (optional) bwa-index of the mixed_genome.
 	   If specified you can omit -m.
 
-	-a the bed file with the custom annotation.
+	-a the gtf file with the custom annotation. 
 
 	-o path to the output directory.
 
-	-b (optional) any value. If specified also 2820 will be made.
+
 ```
 ### Options
 **-i**: The file .tsv with the paths to fastq files as last column  
@@ -85,31 +115,35 @@ cat viral.fa >> reference.fa
 ```
 If the option is not specified the mixed genome will be created and indexed by the program.  
 **-M**: (optional) path to bwa-index of the mixed genome. If specified the index of the mixed genome will not be made. If you specify -M you do not need to specify -m.  
-**-a** :the bed file with the custom annotation  
+**-a** :the gtf file with the custom annotation (containing both reference and viral annotations). It must be sorted  
+You can sort it using the command 
+```
+sort -k1,1 -k4,4n -k5,5n
+```
 **-o**: path to the output directory  
-**-b**: (optional) any value. If specified also 2820 will be made.  
+
 ### Other parameters
-The first step of the pipeline is aligning the reads to the viral genome. This is done through bwa mem. You can change the bwa mem parameters and the samtools filter parameters changing the values in the viral_variables file. In the second step reads will be aligned to the mixed genome and optionally (if -b is used) to the reference genome. Even in this case you can change aligning and filtering parameters in the mixed_variables file or reference_variables file. You can also modify the species (it will be used in the files names and tags).
+The first step of the pipeline is aligning the reads to the viral genome. This is done through bwa mem. You can change the bwa mem parameters and the samtools filter parameters changing the values in the viral_variables file. In the second step the reads will be aligned to the mixed genome. Even in this case you can change aligning and filtering parameters in the mixed_variables file or reference_variables file. You can also modify the species (it will be used in the files names and tags).
 ## Examples
 Suppose you have the **viral genome** (in */resources/viral/aav.fa*) and the **reference genome** (in */resources/human/hg19.fa*) but **no indexes and no mixed genome**.  
 You can run the following:  
 ```
-pipeline.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.bed -v /resources/viral/aav.fa\ 
+RAAVioli.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.gtf -v /resources/viral/aav.fa\ 
 -r /resources/human/hg19.fa
 ```
 If you have the **bwa-index of the hg19.fa** in *the same directory of the genome* you can run:  
 ```
-pipeline.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.bed -v /resources/viral/aav.fa\ 
+RAAVioli.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.gtf -v /resources/viral/aav.fa\ 
              -r /resources/human/hg19.fa -R 1
 ```
 or  
 ```
-pipeline.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.bed -v /resources/viral/aav.fa\ 
+RAAVioli.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.gtf -v /resources/viral/aav.fa\ 
                -r /resources/human/hg19.fa -R /resources/human/hg19.fa
 ```
 Now suppose you have also the **bwa-index of the aav.fa** but in a different directory (*/resources/viral/index/aav.fa*). You can run:  
 ```
-pipeline.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.bed -v /resources/viral/aav.fa\ 
+RAAVioli.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.gtf -v /resources/viral/aav.fa\ 
              -V /resources/viral/index/aav.fa -r /resources/human/hg19.fa -R 1
 ```
 Please note that if you did not create the mixed genome before you have to specify both the viral genome and the reference genome.  
@@ -117,17 +151,17 @@ Instead if you have already created the **mixed genome** you do not need to spec
 E.g. you have the mixed genome in */resources/mixed/mixed.fa* and you have both the **viral index** (in */resources/viral/index/aav.fa*)  and the 
 **reference index** (in **/resources/human/hg19.fa**). You can use:  
 ```
-pipeline.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.bed -V /resources/viral/index/aav.fa\ 
+RAAVioli.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.gtf -V /resources/viral/index/aav.fa\ 
              -R /resources/human/hg19.fa -m /resources/mixed/mixed.fa
 ```
 If you also have the **bwa-index of the mixed genome** (in */resources/mixed/index/mixed.fa*) you can use -M instead of -m (in fact if -M is specified, -m will not be considered):  
 ```
-pipeline.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.bed -V /resources/viral/index/aav.fa\ 
+RAAVioli.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.gtf -V /resources/viral/index/aav.fa\ 
                 -R /resources/human/hg19.fa -M /resources/mixed/index/mixed.fa
 ```
-If instead you do have the mixed_genome and its index but not the Viral index you naturally can use:  
+If instead you do have the mixed_genome and its index but not the Viral index you can use:  
 ```
-pipeline.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.bed -v /resources/viral/aav.fa\ 
+RAAVioli.sh -i sample_label.tsv -t 4 -o outputDir -a annotation.gtf -v /resources/viral/aav.fa\ 
                 -R /resources/human/hg19.fa -M /resources/mixed/index/mixed.fa
 ```
 The same thing applies for the reference genome.

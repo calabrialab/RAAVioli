@@ -5,9 +5,9 @@ source $VARIABLES_VIRAL
 helpFunction()
 {
    echo ""
-   echo "Sample usage: $0 -i sample_label.tsv -t threads -v viral_genome.fa -r reference.fa -R 1 -A annotation.bed -o output_dir -m mixed_genome.fa"
+   echo "Sample usage: $0 -i sample_label.tsv -t threads -v viral_genome.fa -r reference.fa -R 1 -a annotation.gtf -o output_dir -m mixed_genome.fa"
    echo -e "\n"
-   echo -e "\t-i the .tsv file with the paths to fastq files as last column.\n"
+   echo -e "\t-i the .tsv file with the paths to fastq.gz files as last column.\n"
    echo -e "\t-t max threads to be used.\n"
    echo -e "\t-v (optional) the fasta file with viral genome (e.g. AAV).\n\t   The bwa-index will be created in the same directory. \n\t   If you have already an index please see -V.\n\t   You must specify -V if you don't specify -v.\n"
    echo -e "\t-r (optional) the fasta file with the reference genome (e.g. hg19).\n\t   The bwa-index will be created in the same directory. \n\t   If you have already a bwa-index please see -R. N.B.\n\t   You must specify -R if you don't specify -r.\n"
@@ -15,37 +15,52 @@ helpFunction()
    echo -e "\t-R (optional) path to the reference bwa-index with basename\n\t   (e.g. if you have the index in /home/resources/genome/index\n\t   directory and it has as basename hg19.fa\n\t   you have to specify home/resources/genome/index/hg19.fa ).\n\t   If specified the index of the reference genome will not be made.\n\t   If you don't specify -R you must specify -r.\n"
    echo -e "\t-m (optional) the fasta file with the mixed genome\n\t   N.B. viral genome must be appended at the end of reference genome\n\t   with the sequence name chrV.\n\t   Please note that if not specified it will be created and \n\t   you must specify -v and -r \n\t   (since index could be located in a different dir\n\t   and to create the mixed genome both genomes are needed). \n\t   In this case if you already have\n\t   the viral index and/or the reference index \n\t   in the same directory you can specify -V 1 and/or -R 1 instead \n\t   of specifying twice the same path for -v and -V (or -r and -R).\n"
    echo -e "\t-M (optional) bwa-index of the mixed_genome.\n\t   If specified you can omit -m.\n" 
-   echo -e "\t-a the bed file with the custom annotation.\n"
+   echo -e "\t-a the gtf file with the custom annotation.\n"
    echo -e "\t-o path to the output directory.\n"
-   echo -e "\t-b (optional) any value. If specified also 2820 will be made.\n"
    echo -e "\t Please read the Read.me to have more detailed info.\n"
    exit 1 
 }
-while getopts "i:t:v:r:m:a:o:V:R:M:b:" opt
+while getopts "i:t:v:r:m:a:o:V:R:M:" opt
 do
    case "$opt" in
       i ) INPUT_FILE="$OPTARG" ;;
       t ) MAXTHREADS="$OPTARG" ;;
       v ) VIRALGENOME="$OPTARG" ;;
       r ) REFGENOME="$OPTARG" ;;
-      a ) ANNOTATIONGTF="$OPTARG" ;;
       o ) OUTPUT_DIR="$OPTARG" ;;
       m ) MIXEDGENOME="$OPTARG" ;;
+      a ) ANNOTATION="$OPTARG" ;;
       V ) VIRALINDEX="$OPTARG" ;;
       R ) REFINDEX="$OPTARG" ;;
       M ) MIXEDINDEX="$OPTARG" ;;
-      b ) BIS="$OPTARG" ;;
       ? ) helpFunction ;;
    esac
 done
 
 
-if [ -z "$INPUT_FILE" ] || [ -z "$MAXTHREADS" ] || [ -z "$ANNOTATIONGTF" ] || [ -z "$OUTPUT_DIR" ] 
+if [ -z "$INPUT_FILE" ] 
 then
-   echo "Parameters missing!";
+   echo "-i Parameter missing!";
    helpFunction
 fi
 
+if [ -z "$MAXTHREADS" ] 
+then
+   echo "-t Parameter missing!";
+   helpFunction
+fi
+
+if [ -z "$OUTPUT_DIR" ] 
+then
+   echo "-o Parameter missing!";
+   helpFunction
+fi
+
+if [ -z "$ANNOTATION" ] 
+then
+   echo "-a Parameter missing!";
+   helpFunction
+fi
 
 if [ -z "$VIRALGENOME" ] && [ -z "$VIRALINDEX" ] 
 then
@@ -150,7 +165,7 @@ fi
     
 
 PAR_FSAMTOOLS="772" 
-PAR_FSAMTOOLS_BIS="2820"
+
 
 
 #reading all paths from .tsv file
@@ -197,75 +212,6 @@ done
 wait
 
 
-
-echo "[AP] ============ <`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Annotate BED file with closest gene (our annotation) ============"
-for BN in "${list_bn[@]}"
-do
-    $BEDTOOLS   closest -b ${ANNOTATIONGTF} -a ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed -s -d -D ref -t first > \
-    ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.annotated.bed &
-    $BEDTOOLS   closest -b ${ANNOTATIONGTF} -a ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed -d -D ref -t first > \
-    ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.annotated.strandness.bed &
-    $BEDTOOLS   closest -b ${ANNOTATIONGTF} -a ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed -d -D ref > \
-    ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.annotated.allfeatures.strandness.bed &
-    $BEDTOOLS   coverage -b ${ANNOTATIONGTF} -a ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed > \
-    ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.coverageByElement.bed &
-    wait
-done
-
-
-#create 2820 from 772
-#Doing everything again with a different PAR_FSAMTOOLS
-file_par_name="${SPEC}.k${bwa_mem_k}r${bwa_mem_r}a${bwa_mem_A}t${bwa_mem_T}d${bwa_mem_d}b${bwa_mem_B}"
-
-
-echo "[AP] ============ <`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Filtering ============"
-for BN in "${list_bn[@]}"
-do
-    $SAMTOOLS view ${OUTPUT_DIR}/${BN}.${file_par_name}.q${sam_view_q}F${PAR_FSAMTOOLS}.sorted.bam -F ${PAR_FSAMTOOLS_BIS} -q ${sam_view_q} -uS |\
-    $SAMTOOLS sort - -o ${OUTPUT_DIR}/${BN}.${file_par_name}.q${sam_view_q}F${PAR_FSAMTOOLS_BIS}.sorted.bam &   
-done
-wait
-PAR_FSAMTOOLS=${PAR_FSAMTOOLS_BIS}
-file_par_name="${file_par_name}.q${sam_view_q}F${PAR_FSAMTOOLS}"
-
-for BN in "${list_bn[@]}"
-do
-    $BAMTOOLS  filter -tag "AS:>=${bam_filter_AS}" -in ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bam -out \
-    ${OUTPUT_DIR}/${BN}.${file_par_name}.as${bam_filter_AS}.sorted.bam &
-done
-wait
-file_par_name="${file_par_name}.as${bam_filter_AS}"
-for BN in "${list_bn[@]}"
-do
-    $SAMTOOLS index ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bam &
-done
-wait
-
-echo "[AP] ============ <`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Create BED file ============"
-for BN in "${list_bn[@]}"
-do
-    $BEDTOOLS   bamtobed -cigar -i ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bam > ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed &
-done
-wait
-
-
-
-echo "[AP] ============ <`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Annotate BED file with closest gene (our annotation) ============"
-for BN in "${list_bn[@]}"
-do
-    $BEDTOOLS   closest -b ${ANNOTATIONGTF} -a ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed -s -d -D ref -t first > \
-    ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.annotated.bed &
-    $BEDTOOLS   closest -b ${ANNOTATIONGTF} -a ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed -d -D ref -t first > \
-    ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.annotated.strandness.bed &
-    $BEDTOOLS   closest -b ${ANNOTATIONGTF} -a ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed -d -D ref > \
-    ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.annotated.allfeatures.strandness.bed &
-    $BEDTOOLS   coverage -b ${ANNOTATIONGTF} -a ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed > \
-    ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.coverageByElement.bed &
-    wait
-done
-
-
-
 PAR_FSAMTOOLS="772" 
 file_par_name="${SPEC}.k${bwa_mem_k}r${bwa_mem_r}a${bwa_mem_A}t${bwa_mem_T}d${bwa_mem_d}b${bwa_mem_B}"
 file_par_name="${file_par_name}.q${sam_view_q}F${PAR_FSAMTOOLS}"
@@ -277,7 +223,7 @@ do
     BN=`basename $fq_file | sed 's/.fastq.gz//g'`; 
     echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Extract reads from raw data"
     cat ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.bed | cut -f4 | sort | uniq > ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.headerlist
-    zcat ${fq_file} | python $FQEXTRACT ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.headerlist | \
+    zcat ${fq_file} | python2 $FQEXTRACT ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.headerlist | \
     pigz -f -c > ${OUTPUT_DIR}/${BN}.${file_par_name}.sorted.slice.fastq.gz 
 
     echo "[AP] ============ <`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Get sequence file ============"
@@ -286,24 +232,7 @@ do
 done
 
 
-bash step2.sh ${INPUT_FILE} ${file_par_name} ${MAXTHREADS} ${PAR_FSAMTOOLS} ${MIXEDGENOME} ${VARIABLES_MIXED} ${OUTPUT_DIR} 
-
-#checking if BIS is setted. If yes we check if we have to index reference genome (-rIndex 1) and then call the step2 for reference genome.
-if [ ! -z "$BIS" ]
-then
-    if [ -z "$REFINDEX" ]
-        then
-            echo "Indexing ${REFGENOME}"
-            $BWA index -a bwtsw ${REFGENOME}
-        elif [ -z "$REFGENOME" ] 
-        then
-            REFGENOME=$REFINDEX
-        elif [ "$REFINDEX" != "1" ]
-        then
-            REFGENOME=$REFINDEX
-    fi
-    bash step2.sh ${INPUT_FILE} ${file_par_name} ${MAXTHREADS} ${PAR_FSAMTOOLS_BIS} ${REFGENOME} ${VARIABLES_REFERENCE} ${OUTPUT_DIR} 
-fi
+bash step2.sh ${INPUT_FILE} ${file_par_name} ${MAXTHREADS} ${PAR_FSAMTOOLS} ${MIXEDGENOME} ${VARIABLES_MIXED} ${OUTPUT_DIR} ${ANNOTATION}
 
 
-bash summarize.sh $VARIABLES_VIRAL $VARIABLES_MIXED $VARIABLES_REFERENCE $OUTPUT_DIR $BIS
+bash summarize.sh $VARIABLES_VIRAL $VARIABLES_MIXED $OUTPUT_DIR $VARIABLES_STEPR $INPUT_FILE
