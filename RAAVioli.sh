@@ -153,7 +153,7 @@ fi
 if [ -z "$VIRALINDEX" ]
 then
     echo "Indexing ${VIRALGENOME}"
-    #$BWA index -a bwtsw ${VIRALGENOME}
+    $BWA index -a bwtsw ${VIRALGENOME}
 elif [ -z "$VIRALGENOME" ] 
 then
     VIRALGENOME=$VIRALINDEX
