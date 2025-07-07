@@ -1,0 +1,6 @@
+SEQCONTAM="/opt/applications/scripts/isatk/vector/known.seqs.contaminants.tsv";
+FASTQ_QF="slim";
+Q_FILTER=28;
+PLASMID_DIR="/opt/genome/vector/plasmid/";
+PHIXGENOME="/opt/genome/control/phix174/bwa_7/phiX174.fa";
+CONTAMINANTDB="/opt/applications/scripts/isatk/elements/sequences/UniVec_Tiget.fa";

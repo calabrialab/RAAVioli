@@ -1,0 +1,13 @@
+DISEASE=""; #OUTPUT DIRECTORY WILL BE NGSWORKINGPATH/DISEASE/PATIENT/POOL
+PATIENT="";
+POOL=""
+NGSWORKINGPATH="";
+REMOVE_TMP_DIR="remove_tmp_no";  # whatever to remove the tmp dir  or remove_tmp_yes
+TMPDIR=""; # all tmpfiles will go in this DIRECTORY
+R1_FASTQ="pathto/demultiplexed/r1fastq/";
+R2_FASTQ="pathto/demultiplexed/r1fastq/";
+ASSOCIATIONFILE="pathtto/association.file.tsv";
+MAXTHREADS="10";
+OUTPUT_NAME="v1";
+step3_vars_file="pathto/raavioli_short/variables/step3_vars.txt"
+step4_vars_file="pathto/raavioli_short/variables/step4_vars.txt"

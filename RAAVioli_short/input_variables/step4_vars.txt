@@ -1,0 +1,6 @@
+f_value=30
+min_aav_aln=30
+system_sequences_df="pathto/system_sequences.tsv"
+POOLSAID=""
+ITR_DF="pathto/itr_df.tsv"
+ANNOTATIONGTF="pathto/targetgenome.annotation.gtf";

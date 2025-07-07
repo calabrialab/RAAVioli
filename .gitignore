@@ -1,0 +1,56 @@
+# ========================
+# R-related files
+# ========================
+
+# History files
+*.Rhistory
+*.Rapp.history
+
+# Session data
+*.RData
+
+# User-specific RStudio settings
+*.Ruserdata
+
+# Output folders from R CMD check
+**/*.Rcheck/
+
+# ========================
+# Config and local state
+# ========================
+
+# User-modified config file (anywhere)
+**/config.txt
+
+# Locally installed tools (e.g., bwa, samtools, etc.)
+**/bin/
+
+# ========================
+# Python & PyCharm
+# ========================
+
+# PyCharm project settings (anywhere)
+**/.idea/
+*.iml
+
+# Python virtual environments
+**/venv/
+**/.venv/
+
+# Python bytecode and cache
+**/__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+**/.ipynb_checkpoints/
+
+# ========================
+# Logs, temp, system files
+# ========================
+
+*.log
+*.tmp
+*.swp
+*~
+.DS_Store

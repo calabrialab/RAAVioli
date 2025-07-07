@@ -1,0 +1,4 @@
+GENOME="/opt/genome/mixed/human-aav/bwa_7/mixed_AAV-CAG-tdTomato.withBackbone_hg19.fa";
+VECTORGENOME="/opt/genome/mixed/human-aav/AAV-CAG-tdTomato.withBackbone.fa";
+FUSION_PRIMERS="/opt/applications/scripts/isatk/elements/sequences/primers.fusion.grompe.aav.fa";
+BWA_MIN_ALN_LEN=30

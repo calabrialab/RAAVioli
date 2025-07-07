@@ -1,0 +1,14 @@
+bwa_mem_k=18
+bwa_mem_r=2
+bwa_mem_A=1
+bwa_mem_T=15
+bwa_mem_d=100
+bwa_mem_B=4
+bwa_mem_O=5
+bwa_mem_E=5
+bwa_mem_L=0
+bwa_mem_x="ont2d"
+sam_view_q=16
+bam_filter_AS=800
+bam_filter_NM=800
+SPEC="mixed"
