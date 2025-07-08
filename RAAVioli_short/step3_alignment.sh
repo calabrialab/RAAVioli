@@ -20,7 +20,14 @@ for TAG in ${ASSOBCLIST[@]}; do
 	echo -e "R1: ${TMPDIR}/bcmuxall/r1.no12.${TAG}.fastq.gz \nR2: ${TMPDIR}/bcmuxall/r2.no12.${TAG}.fastq.gz"
 	## --- paired-end reads ---
 	# low seed value due to small genome
-	bwa mem -k 14 -r 1 -v 1 -T ${BWA_MIN_ALN_LEN} -c 1 -R "@RG\tID:${b}_${k}\tSM:Vector\tCN:TIGET" -t ${MAXTHREADS} ${VECTORGENOME} <(zcat ${TMPDIR}/bcmuxall/r1.no12.${TAG}.fastq.gz ) | samtools view -F 260 -q ${mapQvec} -uS - | samtools sort - ${OUTDIR_POOL_BCMUXALL}/${DISEASE}_${PATIENT}_${POOL}.${TAG}.noLTRLC.sorted.md
+	#bwa mem -k 14 -r 1 -v 1 -T ${BWA_MIN_ALN_LEN} -c 1 -R "@RG\tID:${b}_${k}\tSM:Vector\tCN:TIGET" -t ${MAXTHREADS} ${VECTORGENOME} <(zcat ${TMPDIR}/bcmuxall/r1.no12.${TAG}.fastq.gz ) | samtools view -F 260 -q ${mapQvec} -uS - | samtools sort - ${OUTDIR_POOL_BCMUXALL}/${DISEASE}_${PATIENT}_${POOL}.${TAG}.noLTRLC.sorted.md
+	bwa mem -k 14 -r 1 -v 1 -T "${BWA_MIN_ALN_LEN}" -c 1 \
+   -R "@RG\tID:${TAG}\tSM:Vector\tCN:TIGET" \
+   -t "${MAXTHREADS}" "${VECTORGENOME}" <(zcat "${TMPDIR}/bcmuxall/r1.no12.${TAG}.fastq.gz") \
+  | samtools view -F 260 -q "${mapQvec}" -O BAM,uncompressed \
+  | samtools sort -@ "${MAXTHREADS}" -O BAM,uncompressed \
+   -o "${OUTDIR_POOL_BCMUXALL}/${DISEASE}_${PATIENT}_${POOL}.${TAG}.noLTRLC.sorted.md.bam"
+
 	samtools index ${OUTDIR_POOL_BCMUXALL}/${DISEASE}_${PATIENT}_${POOL}.${TAG}.noLTRLC.sorted.md.bam ;
 	# extract reads ID of the LTR mapping reads
 	samtools view ${OUTDIR_POOL_BCMUXALL}/${DISEASE}_${PATIENT}_${POOL}.${TAG}.noLTRLC.sorted.md.bam | cut -f1 | sort | uniq > ${OUTDIR_POOL_BCMUXALL}/${DISEASE}_${PATIENT}_${POOL}.${TAG}.sorted.md.vector.list
@@ -44,11 +51,21 @@ for TAG in ${ASSOBCLIST[@]}; do
 
 	# create BAM and sort them
 	echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Creating BAM and indexes (filter from here the dataset using only valid reads: mapped and primary)"
-	samtools view -F 4 -uS ${TMPDIR}/sam/${TAG}.sam | samtools sort - ${TMPDIR}/bam/${TAG}.F4.sorted.md; # THIS CAN BE IMPROVED BY SAVING ONLY PRIMARY ALIGNMENT ON R2 WITH ITS SUPPLEMENTARY OR OTHERWISE BY FILTERING OUT THE READS NAME FROM THE R1 FINAL BAM
+	#samtools view -F 4 -uS ${TMPDIR}/sam/${TAG}.sam | samtools sort - ${TMPDIR}/bam/${TAG}.F4.sorted.md; # THIS CAN BE IMPROVED BY SAVING ONLY PRIMARY ALIGNMENT ON R2 WITH ITS SUPPLEMENTARY OR OTHERWISE BY FILTERING OUT THE READS NAME FROM THE R1 FINAL BAM
+	samtools view -F 4 -O BAM,uncompressed "${TMPDIR}/sam/${TAG}.sam" \
+  | samtools sort -@ "${MAXTHREADS}" -O BAM,uncompressed -o "${TMPDIR}/bam/${TAG}.F4.sorted.md.bam"
+
 	samtools index ${TMPDIR}/bam/${TAG}.F4.sorted.md.bam
-	samtools view -F 2308 -uS ${TMPDIR}/sam/${TAG}.sam | samtools sort - ${TMPDIR}/bam/${TAG}.sorted.md;
+	#samtools view -F 2308 -uS ${TMPDIR}/sam/${TAG}.sam | samtools sort - ${TMPDIR}/bam/${TAG}.sorted.md;
+	samtools view -F 2308 -O BAM,uncompressed "${TMPDIR}/sam/${TAG}.sam" \
+  | samtools sort -@ "${MAXTHREADS}" -O BAM,uncompressed -o "${TMPDIR}/bam/${TAG}.sorted.md.bam"
+
 	# Removing Reads in chrM and chrUn
-	samtools view -h ${TMPDIR}/bam/${TAG}.sorted.md.bam | awk '{if($3 != "chrM" && $3 != "chrUn"){print $0}}' | samtools view -Sb - > ${TMPDIR}/bam/${TAG}.sorted.md.cleaned.bam
+#	samtools view -h ${TMPDIR}/bam/${TAG}.sorted.md.bam | awk '{if($3 != "chrM" && $3 != "chrUn"){print $0}}' | samtools view -Sb - > ${TMPDIR}/bam/${TAG}.sorted.md.cleaned.bam
+  samtools view -h "${TMPDIR}/bam/${TAG}.sorted.md.bam" \
+  | awk '$3 != "chrM" && $3 != "chrUn" || $1 ~ /^@/' \
+  | samtools view -O BAM -o "${TMPDIR}/bam/${TAG}.sorted.md.cleaned.bam"
+
 	samtools index ${TMPDIR}/bam/${TAG}.sorted.md.cleaned.bam
 	rm ${TMPDIR}/sam/${TAG}.sam ;
 done

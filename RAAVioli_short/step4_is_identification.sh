@@ -11,7 +11,7 @@ fi
 
 for TAG in ${ASSOBCLIST[@]}; do
 	echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET]  Searching for chimeras"
-	python3 ${RAAVIOLIDIR}/scripts/adaptive.v11.py -i ${TMPDIR}/bam/${POOLSAID}/${b}.${k}.sorted.md.rel.pg.iss.bam -F ${TMPDIR}/bam/${POOLSAID}/${b}.${k}.F4.sorted.md.bam -o ${TMPDIR}/iss/${POOLSAID}/${b}.${k}.results -l 50 -g 50 -s ${SUBOPTH} -c ${CHRV_NAME} &
+	python3 ${RAAVIOLIDIR}/scripts/adaptive.v11.py -i ${TMPDIR}/bam/${POOLSAID}/${TAG}.sorted.md.rel.pg.iss.bam -F ${TMPDIR}/bam/${POOLSAID}/${TAG}.F4.sorted.md.bam -o ${TMPDIR}/iss/${POOLSAID}/${TAG}.results -l 50 -g 50 -s ${SUBOPTH} -c ${CHRV_NAME} &
 	counter=$((counter + 1))
 	if (( counter >= MAXTHREADS )); then
 		wait
@@ -55,8 +55,8 @@ then
   echo $output_fn_mod_check
   python3 ${RAAVIOLIDIR}/scripts/0.3.remove_expois.py -i ${TMPDIR}/iss/${POOLSAID}/${output_fn_mod} -o ${TMPDIR}/iss/${POOLSAID}/${output_fn_mod_check} -f ${TMPDIR}/iss/${POOLSAID}/expo_analysis/
   final_output_name=$output_fn_mod_check
-
 fi
+
 mkdir ${TMPDIR}/matrix
 mkdir ${TMPDIR}/matrix/${POOLSAID}
 python3 ${RAAVIOLIDIR}/scripts/1.create_matrix_clustering_sorted.py -i ${TMPDIR}/iss/${POOLSAID}/${final_output_name} -o ${TMPDIR}/matrix/${POOLSAID}/ -b ${OUTPUT_NAME}

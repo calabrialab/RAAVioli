@@ -43,13 +43,12 @@ fi
 
 # ##### ================ PHIX quantification START ======================== #####
 echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] PHIX Alignment to reference genome each single pair"
-### old version (with sam output)
-# bwa mem -k 16 -r 1 -M -T 15 -R "@RG\tID:Test\tSM:PHIX\tCN:TIGET" -t ${MAXTHREADS} ${PHIXGENOME} <(zcat ${R1_FASTQ} ) <(zcat ${R2_FASTQ} )> ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.phix.PE.sam
-# samtools view -F 2308 -q 25 -f 35 -uS ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.phix.PE.sam > ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.phix.PE.bam;
-# rm ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.phix.PE.sam
 
 ### NEW version (without sam output)
-bwa mem -k 16 -r 1 -M -v 1 -T 15 -t ${MAXTHREADS} ${PHIXGENOME} <(zcat ${R1_FASTQ} ) <(zcat ${R2_FASTQ} ) | samtools view -F 2308 -q 25 -f 35 -uS - > ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.phix.PE.bam;
+#bwa mem -k 16 -r 1 -M -v 1 -T 15 -t ${MAXTHREADS} ${PHIXGENOME} <(zcat ${R1_FASTQ} ) <(zcat ${R2_FASTQ} ) | samtools view -F 2308 -q 25 -f 35 -uS - > ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.phix.PE.bam;
+
+bwa mem -k 16 -r 1 -M -v 1 -T 15 -t "${MAXTHREADS}" "${PHIXGENOME}" <(zcat "${R1_FASTQ}") <(zcat "${R2_FASTQ}") \
+| samtools view -F 2308 -f 35 -q 25 -O BAM,uncompressed -o "${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.phix.PE.bam"
 
 
 echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Filtering raw data"
@@ -82,7 +81,11 @@ for PLASMID_FILE in ${PLASMID_DIR}/plasmids.*.fa; do
     if [[ "$PLASMID_FILE" != "${PLASMID_DIR}/plasmids.*.fa" ]]; then
 		PLASMID=`basename ${PLASMID_FILE} | sed 's/.fa//g' | cut -d'.' -f2`
 		echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Alignment to reference ${PLASMID} genome"
-		bwa mem -k 14 -r 1 -v 1 -T 15 -c 1 -t ${MAXTHREADS} ${PLASMID_FILE} <(zcat ${R1_FASTQ} ) <(zcat ${R2_FASTQ} ) | samtools view -F 2308 -q 20 -uS - | samtools sort - ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.${PLASMID}.sorted
+		#bwa mem -k 14 -r 1 -v 1 -T 15 -c 1 -t ${MAXTHREADS} ${PLASMID_FILE} <(zcat ${R1_FASTQ} ) <(zcat ${R2_FASTQ} ) | samtools view -F 2308 -q 20 -uS - | samtools sort - ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.${PLASMID}.sorted
+		bwa mem -k 14 -r 1 -v 1 -T 15 -c 1 -t "${MAXTHREADS}" "${PLASMID_FILE}" <(zcat "${R1_FASTQ}") <(zcat "${R2_FASTQ}") \
+    | samtools view -F 2308 -q 20 -O BAM,uncompressed \
+    | samtools sort -O BAM,uncompressed -o "${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.${PLASMID}.sorted.bam"
+
 		samtools view ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.${PLASMID}.sorted.bam | cut -f1 > ${TMPDIR}/${DISEASE}_${PATIENT}_${POOL}.${PLASMID}.list
 		ATLEASTAPLASMID=1;
     fi
