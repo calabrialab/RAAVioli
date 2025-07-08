@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-# da usare quando vuoi estrarre FASTQ avendo i dati dal BED.
 
 import sys 
 # acquire ID from file as list, adding the prefix @
