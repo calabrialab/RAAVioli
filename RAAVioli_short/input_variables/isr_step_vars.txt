@@ -1,0 +1,7 @@
+SUBOPTH=40;
+MINAAVMATCHES=30;
+ITR_DF="pathto/itr_df.tsv" #or leave empty ""
+system_sequences_df="pathto/system_sequences.tsv"; #or leave empty ""
+MAXCLUSTERD=20; # maximum intracluster distance when merging different is together for is quantification
+MERGECOL="CompleteAmplificationID" # or "AddedField1" if you want to merge is from replicates
+ANNOTATIONGTF="pathto/targetgenome.annotation.gtf";

@@ -1,0 +1,17 @@
+name: RAAVioliShort_env
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - python=3.9
+  - numpy=1.22.4
+  - scipy=1.7.3
+  - pandas=2.0.2
+  - pysam=0.22*
+  - bwa=0.7.17
+  - samtools=1.19
+  - htslib=1.19
+  - flexbar=3.5.0
+  - seqan=2.4.0
+  - bamtools=2.4.0
+  - bedtools=2.19.1

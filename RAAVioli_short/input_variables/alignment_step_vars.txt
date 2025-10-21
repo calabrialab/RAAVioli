@@ -1,0 +1,8 @@
+FUSIORERRORRATE=0;
+FUSION_PRIMERS="pathto/primers.fa";
+GENOME="pathto/mixedgenome.fa";
+VECTORGENOME="pathto/vectorgenome.fa";
+BWA_MIN_ALN_LEN=30
+minmapQ=12;
+mapQvec=12;
+

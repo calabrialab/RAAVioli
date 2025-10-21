@@ -1,4 +1,0 @@
-BARCODE_LTR="/opt/applications/scripts/isatk/elements/barcode/barcode.AAV.CAVAZZA.LR53.list";
-BARCODE_LC="/opt/applications/scripts/isatk/elements/barcode/LC-barcodes-192.list";
-LC_fwd="pathto/LC.assayvalidation.fwd.fa"; # Linker Cassette in forward
-LC_rev="pathto/LC.assayvalidation.rc.fa"; # Linker Cassette in reverse

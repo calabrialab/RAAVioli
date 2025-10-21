@@ -1,0 +1,10 @@
+name: RAAVioliLong_env
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  - bwa=0.7.17
+  - samtools=1.9
+  - bamtools=2.5.1
+  - bedtools=2.29.1
+  - r-base=4.0

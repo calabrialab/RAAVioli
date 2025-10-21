@@ -85,8 +85,6 @@ newdf_shs = df_est.pivot(index=['IS_genomicID','gap','junction_locus','n_aav_aln
 df = newdf_shs.copy()
 orig_columns =list(df.columns[:4])
 pcc=df.columns[4:]
-"""df = df.sort_values(['chr','integration_locus','strand','GeneName',
-                                         'GeneStrand','gap','junction'])"""
 df.to_csv(path+f"ShsCount_{outputbn}.CLUSTER{clusterd}.tsv",sep="\t",index=False)
 df[pcc]=df[pcc].replace(1,np.nan)
 df['sum']=df[pcc].sum(axis=1)
@@ -95,8 +93,7 @@ df = df.drop('sum',axis=1)
 cols = df[pcc].columns[df[pcc].sum()>0]
 orig_columns.extend(cols)
 df_final = df[orig_columns]
-"""df_final = df_final.sort_values(['chr','integration_locus','strand','GeneName',
-                                         'GeneStrand','gap','junction'])"""
+
 df_finalnc = ['IS_genomicID','gap','junction','aav_alignments_start_end']
 df_final.columns = df_finalnc + df_final.columns[4:].to_list()
 
@@ -110,18 +107,15 @@ newdf_shs = df_est.pivot(index=['IS_genomicID','gap','junction_locus','n_aav_aln
 df = newdf_shs.copy()
 orig_columns =list(df.columns[:4])
 pcc=df.columns[4:]
-"""df = df.sort_values(['chr','integration_locus','strand','GeneName',
-                                         'GeneStrand','gap','junction'])"""
 df.to_csv(path+f"SeqCount_{outputbn}.CLUSTER{clusterd}.tsv",sep="\t",index=False)
-df[pcc]=df[pcc].replace(1,np.nan)
+#df[pcc]=df[pcc].replace(1,np.nan)
 df['sum']=df[pcc].sum(axis=1)
 df = df[df['sum']!=0].copy()
 df = df.drop('sum',axis=1)
 cols = df[pcc].columns[df[pcc].sum()>0]
 orig_columns.extend(cols)
 df_final = df[orig_columns]
-"""df_final = df_final.sort_values(['chr','integration_locus','strand','GeneName',
-                                         'GeneStrand','gap','junction'])"""
+
 df_finalnc = ['IS_genomicID','gap','junction','aav_alignments_start_end']
 df_final.columns = df_finalnc + df_final.columns[4:].to_list()
 

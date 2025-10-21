@@ -1,5 +1,18 @@
 #!/bin/bash
-set -euo pipefail
+
+INPUT_FILE=""
+MAXTHREADS=""
+VIRALGENOME=""
+REFGENOME=""
+OUTPUT_DIR=""
+MIXEDGENOME=""
+ANNOTATION=""
+VIRALINDEX=""
+REFINDEX=""
+MIXEDINDEX=""
+VARIABLES_MIXED=""
+VARIABLES_VIRAL=""
+VARIABLES_STEPR=""
 
 # Load config from same folder as script
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -8,11 +21,20 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
   echo "Error: config.txt not found in $SCRIPT_DIR. Run setup.sh before running RAAVioli_long.sh"
   exit 1
 fi
-# Check if we're inside the correct conda env
-if [[ "$CONDA_DEFAULT_ENV" != "RAAVioliLong_env" ]]; then
-  echo "Please activate the 'RAAVioliLong_env' conda environment before running this script."
-  exit 1
+
+ENV_NAME="RAAVioliLongRMamba_env"
+if command -v conda >/dev/null 2>&1; then
+    # Load conda shell integration
+    eval "$(conda shell.bash hook)"
+    conda activate "${ENV_NAME}" || {
+        echo "[ERROR] Failed to activate conda environment: ${ENV_NAME}"
+        exit 1
+    }
+else
+    echo "[ERROR] conda not found. Please install Miniconda/Mamba and run setup first."
+    exit 1
 fi
+set -euo pipefail
 source "$CONFIG_FILE"
 
 helpFunction()
@@ -200,7 +222,15 @@ then
     VIRALGENOME=$VIRALINDEX
 fi
 
-
+if [ -f "$INPUT_FILE" ]; then
+    CLEAN_INPUT_FILE=$(mktemp)
+    sed 's/\r$//' "$INPUT_FILE" > "$CLEAN_INPUT_FILE"
+    INPUT_FILE="$CLEAN_INPUT_FILE"
+    echo "[INFO] Normalized line endings in sample label file: $INPUT_FILE"
+else
+    echo "[ERROR] INPUT_FILE not found: $INPUT_FILE"
+    exit 1
+fi
 
 PAR_FSAMTOOLS="772"
 

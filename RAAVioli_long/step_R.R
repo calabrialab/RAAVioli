@@ -1,3 +1,4 @@
+options(repos = c(CRAN = "https://cloud.r-project.org"))
 packages <- c("optparse", "tools","sqldf")
 
 install.packages(setdiff(packages, rownames(installed.packages())))

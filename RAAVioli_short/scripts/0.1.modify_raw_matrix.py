@@ -8,6 +8,7 @@ parser.add_argument('-a', '--assofile', help='assofile')
 parser.add_argument('-o', '--output', help='Output File')
 parser.add_argument('-d', '--dfitr', help='tsv with itr starts and ends',default=None)
 parser.add_argument('-n', '--poolname', help='Pool Name',default=None)
+parser.add_argument('-m', '--minaavmatches', help='Minimum AAV matches',default=30)
 
 
 args = parser.parse_args()
@@ -16,7 +17,11 @@ asso_file = args.assofile
 outputbn = args.output
 itr_file = args.dfitr
 pool_name = args.poolname
-
+min_aav_matches = args.minaavmatches
+try:
+    min_aav_matches = int(min_aav_matches)
+except:
+    min_aav_matches = 0
 
 asso = pd.read_csv(asso_file,sep="\t")
 
@@ -25,13 +30,16 @@ asso = pd.read_csv(asso_file,sep="\t")
 df = pd.read_csv(file,sep="\t")
 df['TagID'] = df['input_file'].apply(lambda x: ".".join(x.split("/")[-1].split(".")[:2]))
 df['concatenatePoolIDSeqRun'] = pool_name
-
+#merge_cols = ['TagID','CompleteAmplificationID','concatenatePoolIDSeqRun','AddedField1','ExperimentID','ReplicateNumber']
+merge_cols = ['TagID','CompleteAmplificationID','concatenatePoolIDSeqRun','AddedField1']
 df_shape_bm = df.shape
-df = df.merge(asso[['TagID','CompleteAmplificationID','concatenatePoolIDSeqRun','AddedField1','ExperimentID','ReplicateNumber']],
+df = df.merge(asso[merge_cols],
          on=['TagID','concatenatePoolIDSeqRun'])
 
 df_shape_new = df.shape
-if df_shape_new[0]!=df_shape_bm[0] or (df_shape_new[1]-4)!=df_shape_bm[1]:
+print(df_shape_bm)
+print(df_shape_new)
+if df_shape_new[0]!=df_shape_bm[0] or (df_shape_new[1]-(len(merge_cols)-2))!=df_shape_bm[1]:
     print("SOMETHING WRONG IN THE MERGE, NEW SHAPE DOES NOT MATCH, check poolname is equal to concatenateseqidrun")
     sys.exit(-1)
 
@@ -74,7 +82,7 @@ df['aav_last_strand'] = df.apply(
         'aav_last_strand'], axis=1)
 
 
-df = df[df.aav_matches>=30].copy()
+df = df[df.aav_matches>=min_aav_matches].copy()
 df = df[df.start_aav==0].copy()
 
 df.to_csv(outputbn,sep="\t", index=False)

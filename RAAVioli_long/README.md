@@ -3,30 +3,10 @@ _Recombinant Adeno-Associated Viral IntegratiOn anaLysIs (RAAVIoli)_
 
 Bioinformatics pipeline for the identification and characterization of AAV integration sites and viral rearrangements.
 
-## Requirements
-Mandatory
-```
-Python3
-R>=3.6
-Ruby
-CMake>=3.11
-```
-The setup will try to install the following tools:
-```
-bwa
-samtools-1.9
-bamtools
-bedtools-2.29.1
-fastx_toolkit_0.0.13
-```
 ### Install
-Clone the repository and run the setup.sh.
 ```
-git clone https://github.com/calabrialab/RAAVioli.git
-cd RAAVioli/RAAVioli_long
-chmod +x setup.sh RAAVioli_long.sh
-./setup.sh
-
+chmod +x mamba_setup.sh
+./mamba_setup.sh
 ```
 it will install all the required tools in the bin sub-directory.
 A *config.txt* with all needed paths will be created. 
@@ -45,18 +25,20 @@ This file is included into the repository. You can modify it or copy it elsewher
 
 Sample usage:
 ```
-./RAAVioli.sh -i sample_label.tsv -t threads -v viral_genome.fa -r reference.fa
-               -R 1 -a annotation.gtf -o output_dir -m mixed_genome.fa
+./RAAVioli_Long.sh -i sample_label.tsv -t threads -v viral_genome.fa -r reference.fa
+               -R 1 -a annotation.gtf -o output_dir -m mixed_genome.fa -c variables_mixed -w variables_viral -y variables_rscript 
 
 
 Sample usage: ./RAAVioli.sh -i sample_label.tsv -t threads -v viral_genome.fa -r reference.fa\
-                            -R 1 -a annotation.gtf -o output_dir -m mixed_genome.fa
+                            -R 1 -a annotation.gtf -o output_dir -m mixed_genome.fa -c variables_mixed -w variables_viral -y variables_rscript 
 
 
 	-i the .tsv file with the paths to fastq files as last column.
 
 	-t max threads to be used.
-
+    -c path to variables_mixed
+    -w path to variables_viral
+    -y path to variables_rscript 
 	-v (optional) the fasta file with viral genome (e.g. AAV).
 	   The bwa-index will be created in the same directory. 
 	   If you have already an index please see -V.
