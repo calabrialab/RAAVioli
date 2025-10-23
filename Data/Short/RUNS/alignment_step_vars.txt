@@ -1,0 +1,4 @@
+FUSION_PRIMERS="${RAAVIOLI_DATA_DIR}/Short/files/ITR_primer.fa";
+BWA_MIN_ALN_LEN=30
+minmapQ=0;
+mapQvec=0;

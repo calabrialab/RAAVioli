@@ -184,16 +184,7 @@ max_gap = int(args.higher_gap)
 min_gap = -int(args.lower_gap)
 suboptimalThreshold = int(args.suboptimal_thr)
 
-"""
-file = "/Users/cipriani.carlo/Desktop/old_AAV-Short/GROMPE/v5/analysis/LTR51.LC30.sorted.md.rel.pg.iss.bam"
-file_F4 = "/Users/cipriani.carlo/Desktop/old_AAV-Short/GROMPE/v5/analysis/LTR51.LC30.F4.sorted.md.bam"
-output = "/Users/cipriani.carlo/Desktop/old_AAV-Short/GROMPE/v5/analysis/prove.newfilter."
-max_gap = int(50)
-min_gap = -int(50)
-"""
 aav_gap_threshold = 50
-#suboptimalThreshold = 40
-# file = "/home/carlo/Scrivania/Master_Degree/Tesi/adaptative/bams/cleaned.26.AAV53.LC50.sorted.md.rel.pg.iss.bam"
 dict_r2 = {}
 r1_step3 = {}
 r2_step3 = {}
@@ -591,64 +582,7 @@ for r1 in r1_reads:
             results['integration'] = ":".join(str(x) for x in target_alignment[0:3])
             list_results.append(results)
             break
-"""
-for read in samfile.fetch():
-    results ={}
-    if read.query_name in r1_reads:
-        r1_integration = df_r1[df_r1['name'] == read.query_name].reset_index()['integration'][0]
-        r1_integration_chr = r1_integration.split(":")[0]
-        r1_integration_strand = r1_integration.split(":")[2]
-        strand = "-" if read.is_reverse else "+"
 
-        if read.has_tag("SA"):
-            sa = read.get_tag("SA")
-            all_alignments = [nl.split(",") for nl in sa.split(";")[:-1]]
-            strand = "-" if read.is_reverse else "+"
-            primary_alignment = [read.reference_name, read.pos, strand, read.cigarstring, read.mapq, 0]
-            all_alignments.append(primary_alignment)
-            chrV_alignments = []
-            others_alignments = []
-            for i in range(len(all_alignments)):
-                if all_alignments[i][0] == "chrV":
-                    chrV_alignments.append(all_alignments[i])
-                else:
-                    others_alignments.append(all_alignments[i])
-            found = False
-            for aln in others_alignments:
-                if aln[0]==r1_integration_chr:
-                    target_alignment = aln
-
-                    results['n_aav_aln'] = 0
-                    results['name'] = read.query_name
-                    results['start_aav'] = 0
-                    results['aav_aln'] = ";"
-                    results['end_aav'] = 0
-                    results['junction'] = None
-                    results['gap'] = 0
-                    results['other'] = target_alignment
-                    results['seq_gap'] = ""
-                    results['integration'] = ":".join(str(x) for x in target_alignment[0:3])
-                    list_results.append(results)
-                    break
-
-        elif read.reference_name!="chrV" and read.reference_name==r1_integration_chr:
-            strand = "-" if read.is_reverse else "+"
-            primary_alignment = [read.reference_name, read.pos, strand, read.cigarstring, read.mapq, 0]
-            results['n_aav_aln'] = 0
-            results['name'] = read.query_name
-            results['start_aav'] = 0
-            results['aav_aln'] = ";"
-            results['end_aav'] = 0
-            results['junction'] = None
-            results['gap'] = 0
-            results['other'] = primary_alignment
-            results['seq_gap'] = ""
-            results['integration'] = ":".join(str(x) for x in primary_alignment[0:3])
-
-            list_results.append(results)
-        else:
-            list_no_integration.append(read.query_name)
-"""
 df_r2 = pd.DataFrame(list_results)
 try:
     df_r2['GCperc'] = df_r2.seq_gap.apply(lambda x: (x.count('G') + x.count('C')) / len(x) if len(x) > 3 else None)
@@ -669,53 +603,7 @@ with open(output + "noR2.log", "w") as logs:
     for r in r2_not_found:
         logs.write(r + "\n")
 print(output, "R2 parsed")
-"""out_samfile = pysam.AlignmentFile(output + "results.bam", "wb", template=samfile)
-sam_file = pysam.AlignmentFile(file_F4, "rb")
-for index, row in df_r1.iterrows():
-    integration = row['integration'].split(":")
-    chr = integration[0]
-    pos = int(integration[1])
-    strand = integration[2]
-    for read in r1_step3[row['name']]:
-        if read.reference_start + 1 <= pos + 1 and read.reference_start + 1 >= pos - 1 and read.reference_name == chr:
 
-            read_to_write = read
-            # read_to_write.query_alignment_start = read.query_alignment_start
-            # read_to_write.query_alignment_end = read.query_alignment_end            #read_to_write.query_qualities = row['other'][4]
-            read_to_write.is_read1 = True
-            read_to_write.is_proper_pair = True
-            if strand == '+':
-                read_to_write.is_reverse = False
-                read_to_write.mate_is_reverse = True
-                read_to_write.flag = 99
-            else:
-                read_to_write.is_reverse = True
-                read_to_write.mate_is_reverse = False
-                read_to_write.flag = 83
-            out_samfile.write(read_to_write)
-            break
-
-for index, row in df_r2.iterrows():
-    integration = row['integration'].split(":")
-    chr = integration[0]
-    pos = int(integration[1])
-    strand = integration[2]
-    for read in r2_step3[row['name']]:
-        if read.reference_start + 1 <= pos + 1 and read.reference_start + 1 >= pos - 1 and read.reference_name == chr:
-            read_to_write = read
-            read_to_write.is_read2 = True
-            read_to_write.is_proper_pair = True
-            if strand == '+':
-                read_to_write.is_reverse = False
-                read_to_write.mate_is_reverse = True
-                read_to_write.flag = 163
-            else:
-                read_to_write.is_reverse = True
-                read_to_write.mate_is_reverse = False
-                read_to_write.flag = 147
-            out_samfile.write(read_to_write)
-            break
-out_samfile.close()"""
 print(output, " FINISHED")
 
 

@@ -39,7 +39,11 @@ mkdir ${OUTDIR_POOL_MATRIX};
 mkdir ${OUTDIR_MERGE_STATS};
 mkdir ${OUTDIR_POOL_STATS};
 
+
 mkdir ${TMPDIR} ;
+TMPDIR="${TMPDIR}/${POOL}"
+mkdir ${TMPDIR} ;
+
 mkdir ${TMPDIR}/bcmuxall/
 mkdir ${TMPDIR}/bed/
 mkdir ${TMPDIR}/bam/
@@ -59,10 +63,10 @@ OUTDIR_VECTOR_POOL=${TMPDIR}/pools
 RUN_ID=`date +"%Y%m%d%H%M%S"`
 RUN_NAME="${DISEASE}|${PATIENT}|${POOL}"
 
-BCLTRf=`cut "${BARCODE_LTR}" -f1`;
-BCLTR=(${BCLTRf}) ;
-BCLCf=`cut "${BARCODE_LC}" -f1`;
-BCLC=(${BCLCf}) ;
+#BCLTRf=`cut "${BARCODE_LTR}" -f1`;
+#BCLTR=(${BCLTRf}) ;
+#BCLCf=`cut "${BARCODE_LC}" -f1`;
+#BCLC=(${BCLCf}) ;
 
 
 
@@ -87,7 +91,7 @@ else
     exit 1
 fi
 
-ASSOBCLIST=(`cut -f${target_index} ${ASSOCIATIONFILE} | tail -n+2 | sort | uniq `); ## barcode list (as first colun of the association fTIGETile!) user defined!
+ASSOBCLIST=(`cut -f${target_index} ${ASSOCIATIONFILE} | tail -n+2 | sort | uniq `);
 
 
 
@@ -112,8 +116,12 @@ if [ -n "$isr_vars_file" ]; then
   source step_is_identification.sh
 fi
 
-
-
+#### clean tmp dir
+echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Cleaning TMP Directory... "
+if [ ${REMOVE_TMP_DIR} = "remove_tmp_yes" ]
+	then
+	rm -fr ${TMPDIR};
+fi
 
 echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Completed ";
 

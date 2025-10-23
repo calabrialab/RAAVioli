@@ -252,9 +252,9 @@ do
     $BWA mem -k ${bwa_mem_k} -r ${bwa_mem_r} -A ${bwa_mem_A} -T ${bwa_mem_T} -d ${bwa_mem_d} -B ${bwa_mem_B} -O ${bwa_mem_O} \
      -E ${bwa_mem_E} -L ${bwa_mem_L} -R ${bwa_mem_R} -t ${MAXTHREADS} ${VIRALGENOME} <( zcat ${fq_file} ) | \
        $SAMTOOLS view -F ${PAR_FSAMTOOLS} -q $sam_view_q -uS - | \
-        $SAMTOOLS sort - -o ${OUTPUT_DIR}/${BN}.${file_par_name}.q${sam_view_q}F${PAR_FSAMTOOLS}.sorted.bam &
+        $SAMTOOLS sort - -o ${OUTPUT_DIR}/${BN}.${file_par_name}.q${sam_view_q}F${PAR_FSAMTOOLS}.sorted.bam
 done
-wait
+
 
 file_par_name="${file_par_name}.q${sam_view_q}F${PAR_FSAMTOOLS}"
 
