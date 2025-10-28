@@ -24,3 +24,10 @@ chmod +x mamba_setup.sh
 ./mamba_setup.sh
 ```
 Simulation Data and example files to run both pipelines are in the Data Directory.
+
+#### What’s Next?
+
+I’m working on an improved version of the adaptive script for short-read characterization with lower memory usage.
+Plotting examples from different publications will also be added, along with a few smaller updates and refinements.
+_Check the repository periodically for the latest changes._
+

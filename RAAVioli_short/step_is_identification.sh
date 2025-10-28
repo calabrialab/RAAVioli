@@ -83,6 +83,8 @@ then
   bash ${RAAVIOLIDIR}/utils_scripts/annotate_matrix.sh  -m ${TMPDIR}/matrix/${POOLSAID}/ShsCount_${OUTPUT_NAME}.CLUSTER${MAXCLUSTERD}.tsv -g ${ANNOTATIONGTF} -t vispa2 -o ${TMPDIR}/matrix/${POOLSAID}/
   bash ${RAAVIOLIDIR}/utils_scripts/annotate_matrix.sh  -m ${TMPDIR}/matrix/${POOLSAID}/SeqCount_${OUTPUT_NAME}.CLUSTER${MAXCLUSTERD}.cleaned1.tsv -g ${ANNOTATIONGTF} -t vispa2 -o ${TMPDIR}/matrix/${POOLSAID}/
   bash ${RAAVIOLIDIR}/utils_scripts/annotate_matrix.sh  -m ${TMPDIR}/matrix/${POOLSAID}/ShsCount_${OUTPUT_NAME}.CLUSTER${MAXCLUSTERD}.cleaned1.tsv -g ${ANNOTATIONGTF} -t vispa2 -o ${TMPDIR}/matrix/${POOLSAID}/
+  cp ${TMPDIR}/matrix/${POOLSAID}/*.annotated.tsv.gz ${OUTDIR_POOL_MATRIX}
 fi
 cp ${TMPDIR}/iss/${POOLSAID}/${final_output_name}  ${OUTDIR_POOL_MATRIX}
 cp ${TMPDIR}/matrix/${POOLSAID}/*.tsv ${OUTDIR_POOL_MATRIX}
+

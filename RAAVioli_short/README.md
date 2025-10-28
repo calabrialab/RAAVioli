@@ -32,7 +32,7 @@ For each sample, RAAVioli also produces a `results_only_aav` file containing the
 > R2 is used to validate chimeras found in R1.  
 > Although it is technically possible to search for integration sites in R2, this would likely produce a high number of false positives due to missing contextual information.
 
-In addition, a compressed file `results.tsv.gz` is generated for each sample.  
+In addition, a compressed file `results.tsv.gz` is generated concatenating each sample result.  
 It provides per-read details such as integration locus, rearrangements, and alignment features — useful for plotting, debugging, or downstream analysis.
 
 ---

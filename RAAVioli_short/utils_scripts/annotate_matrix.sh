@@ -143,8 +143,48 @@ if [ ${TYPE} = "vispa2" ]; then
     printf "\n<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Annotation.\n"
     python3 ${RAAVIOLIDIR}/utils_scripts/annotate_bed.v3.py -a ${GTF} -b ${MATRIX} --matrix -o ${OUTDIR}/iss.annotation.tsv
 
-    # rest of vispa2 block unchanged …
-    # (exons_true / else branches remain identical)
+    rm None;
+    if [[ ${EXONS} = "exons_true" ]]; then
+        printf "\n<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Retrieving Annotation Data.\n\n"
+        cat ${OUTDIR}/iss.annotation.tsv | cut -f7,11 > ${OUTDIR}/genes_data.tsv
+        cat ${OUTDIR}/iss.annotation.tsv | cut -f14 > ${OUTDIR}/exons_data2.tsv
+        cat ${OUTDIR}/iss.annotation.tsv | cut -f13 | awk -F '";' '{print $3}' | tr -d " " | sed 's/\bgene[^ ]*//' | awk -F '"' '{print $2}' > ${OUTDIR}/exons_data1.tsv
+        cat ${OUTDIR}/iss.annotation.tsv | cut -f13 | awk -F '";' '{print $2}' | tr -d " " | awk -F '"' '{print $2}' > ${OUTDIR}/transcripts_data.tsv
+        printf "GeneName\tGeneStrand\n" > ${OUTDIR}/genes.tsv
+        printf "ExonNumber\tExonDistance\n" > ${OUTDIR}/exons.tsv
+        printf "Transcript\n" > ${OUTDIR}/transcripts.tsv
+        cat ${OUTDIR}/genes_data.tsv >> ${OUTDIR}/genes.tsv
+        cat ${OUTDIR}/transcripts_data.tsv >> ${OUTDIR}/transcripts.tsv
+        paste -d '\t' ${OUTDIR}/exons_data1.tsv ${OUTDIR}/exons_data2.tsv > ${OUTDIR}/exons_data.tsv
+        rm ${OUTDIR}/exons_data1.tsv ${OUTDIR}/exons_data2.tsv
+        cat ${OUTDIR}/exons_data.tsv >> ${OUTDIR}/exons.tsv
+
+        printf "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Merging Annotation Data into ISs Matrix.\n"
+        n_columns=$(head -n 1 ${MATRIX} | awk '{print NF}')
+        cat ${MATRIX} | cut -f1,2,3 > ${OUTDIR}/matrix.part1.tsv
+        cat ${MATRIX} | cut -f4-${n_columns} > ${OUTDIR}/matrix.part2.tsv
+        MATRIX="`basename ${MATRIX:0:-4}`";
+        paste -d '\t' ${OUTDIR}/matrix.part1.tsv ${OUTDIR}/genes.tsv ${OUTDIR}/exons.tsv ${OUTDIR}/transcripts.tsv > ${OUTDIR}/matrix.part1.annotated.tsv
+        paste -d '\t' ${OUTDIR}/matrix.part1.annotated.tsv ${OUTDIR}/matrix.part2.tsv > ${OUTDIR}/${MATRIX}.annotated.tsv
+        sed -i -e "s/\r//g" ${OUTDIR}/${MATRIX}.annotated.tsv
+        pigz -f ${OUTDIR}/${MATRIX}.annotated.tsv
+        rm ${OUTDIR}/matrix.part1.tsv ${OUTDIR}/matrix.part2.tsv ${OUTDIR}/genes.tsv ${OUTDIR}/genes_data.tsv ${OUTDIR}/exons.tsv ${OUTDIR}/exons_data.tsv ${OUTDIR}/matrix.part1.annotated.tsv ${OUTDIR}/iss.annotation.tsv ${MATRIX:0:-4}.no0.tsv ${OUTDIR}/transcripts_data.tsv ${OUTDIR}/transcripts.tsv;
+    else
+        printf "\n<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Retrieving Annotation Data.\n\n"
+        cat ${OUTDIR}/iss.annotation.tsv | cut -f7,11 > ${OUTDIR}/genes_data.tsv
+        printf "GeneName\tGeneStrand\n" > ${OUTDIR}/genes.tsv
+        cat ${OUTDIR}/genes_data.tsv >> ${OUTDIR}/genes.tsv
+
+        printf "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Merging Annotation Data into ISs Matrix.\n"
+        n_columns=$(head -n 1 ${MATRIX} | awk '{print NF}')
+        cat ${MATRIX} | cut -f1,2,3 > ${OUTDIR}/matrix.part1.tsv
+        cat ${MATRIX} | cut -f4-${n_columns} > ${OUTDIR}/matrix.part2.tsv
+        MATRIX="`basename ${MATRIX:0:-4}`";
+        paste -d '\t' ${OUTDIR}/matrix.part1.tsv ${OUTDIR}/genes.tsv > ${OUTDIR}/matrix.part1.annotated.tsv
+        paste -d '\t' ${OUTDIR}/matrix.part1.annotated.tsv ${OUTDIR}/matrix.part2.tsv > ${OUTDIR}/${MATRIX}.annotated.tsv
+        pigz -f ${OUTDIR}/${MATRIX}.annotated.tsv
+        rm ${OUTDIR}/matrix.part1.tsv ${OUTDIR}/matrix.part2.tsv ${OUTDIR}/genes.tsv ${OUTDIR}/genes_data.tsv ${OUTDIR}/matrix.part1.annotated.tsv ${OUTDIR}/iss.annotation.tsv ${MATRIX:0:-4}.no0.tsv;
+    fi
 
     echo "
 
@@ -154,78 +194,3 @@ if [ ${TYPE} = "vispa2" ]; then
         "
 fi
 
-if [ ${TYPE} = "vispa" ]; then
-    printf "\n<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Preparing Data.\n"
-    case "${MATRIX}" in
-    *.gz )
-        N_MATRIX="`basename ${MATRIX}`";
-        zcat ${MATRIX} | sed '/^M/ d' > ${N_MATRIX:0:-7}.noChrM.tsv
-        zcat ${N_MATRIX:0:-7}.noChrM.tsv | sed "s/\t0/\t/g" > ${N_MATRIX:0:-7}.no0.tsv;
-        rm ${N_MATRIX:0:-7}.noChrM.tsv;
-        MATRIX="`basename ${N_MATRIX:0:-7}.no0.tsv`";
-        ;;
-    *)
-        N_MATRIX="`basename ${MATRIX}`";
-        cat ${MATRIX} | sed '/^M/ d' > ${N_MATRIX:0:-4}.noChrM.tsv
-        sed "s/\t0/\t/g" ${N_MATRIX:0:-4}.noChrM.tsv > ${N_MATRIX:0:-4}.no0.tsv;
-        MATRIX="`basename ${N_MATRIX:0:-4}.no0.tsv`";
-        ;;
-    esac
-
-    printf "\n<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Annotation.\n"
-   python3 ${RAAVIOLIDIR}/utils_scripts/annotate_bed.v3.py  -a ${GTF} -b ${MATRIX} --matrix -o ${OUTDIR}/iss.annotation.tsv
-
-    # rest of vispa block unchanged …
-    # (exons_true / else branches remain identical)
-
-    echo "
-
-    ---------------------------------------------------------------------------------
-                          ENDING PROCESSING AT: `date +'%Y-%m-%d %H:%M:%S'`
-    ---------------------------------------------------------------------------------
-        "
-fi
-
-if [ ${TYPE} = "clustering" ]; then
-    printf "\n<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Preparing Data.\n"
-    case "${MATRIX}" in
-    *.gz )
-        N_MATRIX="`basename ${MATRIX}`";
-        zcat ${MATRIX} | sed 's/,$//g' > ${N_MATRIX:0:-7}.tmp.csv;
-        sed 's|,|\t|g' ${N_MATRIX:0:-7}.tmp.csv > ${N_MATRIX:0:-7}.converted.tsv;
-        rm ${N_MATRIX:0:-7}.tmp.csv;
-        sed "s/\t0/\t/g" ${N_MATRIX:0:-7}.converted.tsv > ${N_MATRIX:0:-7}.no0.tsv;
-        rm ${N_MATRIX:0:-7}.converted.tsv;
-        MATRIX="`basename ${N_MATRIX:0:-7}.no0.tsv`";
-        cat ${MATRIX} | awk -F$'\t' '{print $2"\t"$3"\t"$3}' | sed '1d' > ${MATRIX:0:-7}.bed
-
-        printf "\n<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Annotation.\n"
-        python3 ${RAAVIOLIDIR}/utils_scripts/annotate_bed.v3.py -a ${GTF} -b ${MATRIX:0:-7}.bed -o ${OUTDIR}/iss.annotation.tsv
-        rm ${MATRIX:0:-7}.bed;
-        ;;
-    *)
-        N_MATRIX="`basename ${MATRIX}`";
-        sed 's/,$//g' ${MATRIX} > ${N_MATRIX:0:-4}.tmp.csv;
-        sed 's|,|\t|g' ${N_MATRIX:0:-4}.tmp.csv > ${N_MATRIX:0:-4}.converted.tsv;
-        rm ${N_MATRIX:0:-4}.tmp.csv;
-        sed "s/\t0/\t/g" ${N_MATRIX:0:-4}.converted.tsv > ${N_MATRIX:0:-4}.no0.tsv;
-        rm ${N_MATRIX:0:-4}.converted.tsv;
-        MATRIX="`basename ${N_MATRIX:0:-4}.no0.tsv`";
-        cat ${MATRIX} | awk -F$'\t' '{print $2"\t"$3"\t"$3}' | sed '1d' > ${MATRIX:0:-4}.bed
-
-        printf "\n<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Annotation.\n"
-        python3 ${RAAVIOLIDIR}/utils_scripts/annotate_bed.v3.py -a ${GTF} -b ${MATRIX:0:-4}.bed -o ${OUTDIR}/iss.annotation.tsv
-        rm ${MATRIX:0:-4}.bed;
-        ;;
-    esac
-
-    # rest of clustering block unchanged …
-    # (exons_true / else branches remain identical)
-
-    echo "
-
-    ---------------------------------------------------------------------------------
-                          ENDING PROCESSING AT: `date +'%Y-%m-%d %H:%M:%S'`
-    ---------------------------------------------------------------------------------
-        "
-fi

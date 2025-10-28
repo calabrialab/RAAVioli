@@ -3,4 +3,3 @@ FUSION_PRIMERS="pathto/primers.fa";
 BWA_MIN_ALN_LEN=30
 minmapQ=12;
 mapQvec=12;
-
