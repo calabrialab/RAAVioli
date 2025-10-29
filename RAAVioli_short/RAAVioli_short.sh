@@ -145,10 +145,10 @@ if [ -n "$isr_vars_file" ]; then
 fi
 
 #### clean tmp dir
-if [ ${REMOVE_TMP_DIR} = "remove_tmp_yes" ]
-  echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Cleaning TMP Directory... "
-	then
-	rm -fr "${TMPDIR}";
+if [ "$REMOVE_TMP_DIR" = "remove_tmp_yes" ]
+then
+    echo "<$(date +'%Y-%m-%d %H:%M:%S')> [TIGET] Cleaning TMP Directory..."
+    rm -fr "${TMPDIR}"
 fi
 
 echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Completed ";
