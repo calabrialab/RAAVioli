@@ -184,11 +184,11 @@ fi
 source $VARIABLES_VIRAL
 if [ ! -d "$OUTPUT_DIR" ]
 then
-    mkdir $OUTPUT_DIR
-    mkdir $OUTPUT_DIR/resources
+    mkdir -p $OUTPUT_DIR
+    mkdir -p $OUTPUT_DIR/resources
 elif [ ! -d "$OUTPUT_DIR/resources" ]
 then
-    mkdir $OUTPUT_DIR/resources
+    mkdir -p $OUTPUT_DIR/resources
 fi
 
 # If mixed index is specified we don't need mixed genome. If neither MIXEDINDEX nor MIXEDGENOME is specified we have to create both

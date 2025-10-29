@@ -17,7 +17,12 @@ fi
 eval "$(conda shell.bash hook)"
 conda activate "$ENV_NAME"
 
-# ---------------- DISABLE USER-SITE ---------------- #
+# ---------------- DISABLE USER-SITE (current session) ---------------- #
+export PYTHONNOUSERSITE=1
+unset PYTHONPATH
+echo "[INFO] Disabled user site for current session."
+
+# Also persist this setting for future activations
 mkdir -p "$CONDA_PREFIX/etc/conda/activate.d"
 mkdir -p "$CONDA_PREFIX/etc/conda/deactivate.d"
 
@@ -29,6 +34,7 @@ EOF
 cat > "$CONDA_PREFIX/etc/conda/deactivate.d/disable_usersite.sh" <<'EOF'
 unset PYTHONNOUSERSITE
 EOF
+
 
 echo "[INFO] Configured env to ignore ~/.local site-packages."
 

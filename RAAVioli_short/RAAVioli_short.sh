@@ -49,60 +49,53 @@ OUTDIR_MERGE_MATRIX="${NGSWORKINGPATH}/${DISEASE}/${PATIENT}/matrix/";
 OUTDIR_POOL_MATRIX="${NGSWORKINGPATH}/${DISEASE}/${PATIENT}/matrix/"${POOL};
 
 
-mkdir ${NGSWORKINGPATH}
-mkdir ${NGSWORKINGPATH}/${DISEASE}
-mkdir ${NGSWORKINGPATH}/${DISEASE}/${PATIENT}
-mkdir ${OUTDIR_MERGE_MATRIX};
-mkdir ${OUTDIR_POOL_MATRIX};
-mkdir ${OUTDIR_MERGE_BAM};
-mkdir ${OUTDIR_MERGE_BED};
-mkdir ${OUTDIR_MERGE_QUAL};
-mkdir ${OUTDIR_POOL_QUAL};
-mkdir ${OUTDIR_MERGE_QUANTIF};
-mkdir ${OUTDIR_POOL_QUANTIF};
-mkdir ${OUTDIR_MERGE_ISS};
-mkdir ${OUTDIR_POOL_ISS};
-mkdir ${OUTDIR_POOL_ISS_REPEATS};
-mkdir ${OUTDIR_MERGE_BCMUXALL};
-mkdir ${OUTDIR_POOL_BCMUXALL};
+mkdir -p "${NGSWORKINGPATH}"
+mkdir -p "${NGSWORKINGPATH}/${DISEASE}"
+mkdir -p "${NGSWORKINGPATH}/${DISEASE}/${PATIENT}"
+mkdir -p "${OUTDIR_MERGE_MATRIX}";
+mkdir -p "${OUTDIR_POOL_MATRIX}";
+mkdir -p "${OUTDIR_MERGE_BAM}";
+mkdir -p "${OUTDIR_MERGE_BED}";
+mkdir -p "${OUTDIR_MERGE_QUAL}";
+mkdir -p "${OUTDIR_POOL_QUAL}";
+mkdir -p "${OUTDIR_MERGE_QUANTIF}";
+mkdir -p "${OUTDIR_POOL_QUANTIF}";
+mkdir -p "${OUTDIR_MERGE_ISS}";
+mkdir -p "${OUTDIR_POOL_ISS}";
+mkdir -p "${OUTDIR_POOL_ISS_REPEATS}";
+mkdir -p "${OUTDIR_MERGE_BCMUXALL}";
+mkdir -p "${OUTDIR_POOL_BCMUXALL}";
 
-mkdir ${OUTDIR_POOL_BAM};
-mkdir ${OUTDIR_POOL_BED};
+mkdir -p "${OUTDIR_POOL_BAM}";
+mkdir -p "${OUTDIR_POOL_BED}";
 
-mkdir ${OUTDIR_MERGE_MATRIX};
-mkdir ${OUTDIR_POOL_MATRIX};
-mkdir ${OUTDIR_MERGE_STATS};
-mkdir ${OUTDIR_POOL_STATS};
+mkdir -p "${OUTDIR_MERGE_MATRIX}";
+mkdir -p "${OUTDIR_POOL_MATRIX}";
+mkdir -p "${OUTDIR_MERGE_STATS}";
+mkdir -p "${OUTDIR_POOL_STATS}";
 
 
-mkdir ${TMPDIR} ;
+mkdir -p "${TMPDIR}";
 TMPDIR="${TMPDIR}/${POOL}/"
-mkdir ${TMPDIR} ;
+mkdir -p "${TMPDIR}";
 
-mkdir ${TMPDIR}/bcmuxall/
-mkdir ${TMPDIR}/bed/
-mkdir ${TMPDIR}/bam/
-mkdir ${TMPDIR}/sam/
-mkdir ${TMPDIR}/pools/
-mkdir ${TMPDIR}/iss/
-mkdir ${TMPDIR}/matrix/
+mkdir -p "${TMPDIR}/bcmuxall/"
+mkdir -p "${TMPDIR}/bed/"
+mkdir -p "${TMPDIR}/bam/"
+mkdir -p "${TMPDIR}/sam/"
+mkdir -p "${TMPDIR}/pools/"
+mkdir -p "${TMPDIR}/iss/"
+mkdir -p "${TMPDIR}/matrix/"
+mkdir -p "${TMPDIR}/stats/"
 
-mkdir ${TMPDIR}/stats/
 
-
-OUTDIR_VECTOR=${TMPDIR}/pools
-OUTDIR_VECTOR_POOL=${TMPDIR}/pools
+OUTDIR_VECTOR="${TMPDIR}/pools"
+OUTDIR_VECTOR_POOL="${TMPDIR}/pools"
 
 
 # checking vars
 RUN_ID=`date +"%Y%m%d%H%M%S"`
 RUN_NAME="${DISEASE}|${PATIENT}|${POOL}"
-
-#BCLTRf=`cut "${BARCODE_LTR}" -f1`;
-#BCLTR=(${BCLTRf}) ;
-#BCLCf=`cut "${BARCODE_LC}" -f1`;
-#BCLC=(${BCLCf}) ;
-
 
 
 # Specify the target string to search
@@ -117,7 +110,7 @@ target_index=$(awk -F'\t' -v target="$target_string" 'NR==1 {
         }
     }
     print -1
-}' ${ASSOCIATIONFILE})
+}' "${ASSOCIATIONFILE}")
 
 if [ $target_index -ne -1 ]; then
     echo "Index of '$target_string' in the header: $target_index"
@@ -126,20 +119,20 @@ else
     exit 1
 fi
 
-ASSOBCLIST=(`cut -f${target_index} ${ASSOCIATIONFILE} | tail -n+2 | sort | uniq `);
-
+#ASSOBCLIST=(`cut -f${target_index} "${ASSOCIATIONFILE}" | tail -n+2 | sort | uniq `);
+mapfile -t ASSOBCLIST < <(cut -f"${target_index}" "${ASSOCIATIONFILE}" | tail -n+2 | sort -u)
 
 
 ##### ================ COPY DATA INTO TMP DIR ================== #####
 
 if [ -n "$alignment_vars_file" ]; then
-	source $alignment_vars_file
+	source "$alignment_vars_file"
 
-		for TAG in ${ASSOBCLIST[@]}; do
+		for TAG in "${ASSOBCLIST[@]}"; do
 		##### ==========================  MOVING READS IN THE BCMUXALL DIR IF STEP 1 AND 2 NOT DONE ================================= #####
 			echo "MOVING READS IN THE BCMUXALL DIR"
-			cp ${R1_FASTQ}/${TAG}.r1.fastq.gz  ${TMPDIR}/bcmuxall/${TAG}.cleanR1LCR2LC_1.fastq.gz
-			cp ${R2_FASTQ}/${TAG}.r2.fastq.gz  ${TMPDIR}/bcmuxall/${TAG}.cleanR1LCR2LC_2.fastq.gz
+			cp "${R1_FASTQ}/${TAG}.r1.fastq.gz"  "${TMPDIR}/bcmuxall/${TAG}.cleanR1LCR2LC_1.fastq.gz"
+			cp "${R2_FASTQ}/${TAG}.r2.fastq.gz"  "${TMPDIR}/bcmuxall/${TAG}.cleanR1LCR2LC_2.fastq.gz"
     	done
 	source step_alignment.sh
 fi
@@ -147,15 +140,15 @@ fi
 
 
 if [ -n "$isr_vars_file" ]; then
-  source $isr_vars_file
+  source "$isr_vars_file"
   source step_is_identification.sh
 fi
 
 #### clean tmp dir
-echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Cleaning TMP Directory... "
 if [ ${REMOVE_TMP_DIR} = "remove_tmp_yes" ]
+  echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Cleaning TMP Directory... "
 	then
-	rm -fr ${TMPDIR};
+	rm -fr "${TMPDIR}";
 fi
 
 echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET] Completed ";

@@ -66,8 +66,8 @@ for index, row in df_comb.iterrows():
 df_shape = df.shape
 df = df.merge(df_group[['name', 'group']], on='name', how='left')
 df_group[['name','group']].to_csv(path+outputbn+".cluster.groups.namereads.tsv",sep="\t",index=False)
-gr_cols = ["target_chr", "integration_locus","target_strand", "junction_locus", "gap","CompleteAmplificationID",
- merge_id_col, "aav_last_strand","n_aav_aln"]
+gr_cols = list(set(["target_chr", "integration_locus","target_strand", "junction_locus", "gap","CompleteAmplificationID",
+ merge_id_col, "aav_last_strand","n_aav_aln"]))
 dfgroupis = df.groupby(gr_cols+['group'])['shs_end'].nunique().reset_index()
 #dfshscid = df.groupby(['group','CompleteAmplificationID'])['shs_end'].nunique().reset_index() #.agg({'seq_count':'size','shs_count':pd.Series.nunique})
 df_shs = dfgroupis.groupby(['group'])['shs_end'].sum().reset_index()
