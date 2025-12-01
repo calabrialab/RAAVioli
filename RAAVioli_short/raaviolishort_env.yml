@@ -15,3 +15,4 @@ dependencies:
   - seqan=2.4.0
   - bamtools=2.4.0
   - bedtools=2.19.1
+  - pigz
