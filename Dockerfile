@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # 1. Basic tools
 # ------------------------------------------------------------
 RUN apt-get update && apt-get install -y \
-    wget curl git bzip2 ca-certificates \
+    wget curl git bzip2 ca-certificates nano \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ------------------------------------------------------------
@@ -56,5 +56,6 @@ RUN echo "source /opt/conda/etc/profile.d/conda.sh" >> /etc/bash.bashrc
 # ------------------------------------------------------------
 # 6. Entry point logic
 # ------------------------------------------------------------
-ENTRYPOINT ["/bin/bash", "-l", "-c"]
-CMD ["bash"]
+SHELL ["/bin/bash", "-lc"]
+# Make container start with a login shell
+ENTRYPOINT ["/bin/bash", "-l"]

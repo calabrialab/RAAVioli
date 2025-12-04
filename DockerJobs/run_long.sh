@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -euo pipefail
 
+source /opt/conda/etc/profile.d/conda.sh
 if [[ $# -lt 1 ]]; then
     echo "Usage: run_long.sh <RAAVioli_long.sh arguments>"
     echo ""

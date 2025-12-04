@@ -42,12 +42,12 @@ You must provide:
 
 ### Docker Usage
 ```
-docker run -d -name job_name --rm \
+docker run -d -name job_name \
     -v /path/to/host_genome:/opt/host \
     -v /path/to/vector_genome:/opt/vector \
     -v /path/to/output_dir:/opt/output \
     raavioli_docker \
-    /opt/MTMRaavioli/DockerJobs/setup_genome.sh \
+    /opt/Raavioli/DockerJobs/setup_genome.sh \
         --host /opt/host/hg19.fa \
         --vector /opt/vector/vector.fa \
         --outdir /opt/output \
@@ -122,7 +122,7 @@ Every directory referenced in your config must be mounted into Docker, for examp
 
 Example (remember to assign a job name to show logs later on) :
 ```
-docker run -d --name job_short --rm \
+docker run -d --name job_short \
     -v /path/to/raw_fastq:/opt/raw \
     -v /path/to/genomes:/opt/genomes \
     -v /path/to/output:/opt/output \
@@ -182,14 +182,14 @@ sample2    conditionA    /opt/raw/sample2.fastq.gz
 ---
 ### 3. Running the Docker job
 ```
-docker run -d --name job_long --rm \
+docker run -d --name job_long \
     -v /path/to/raw_fastq:/opt/raw \
     -v /path/to/genomes:/opt/genomes \
     -v /path/to/annotation:/opt/annot \
     -v /path/to/configs:/opt/config \
     -v /path/to/output:/opt/output \
     raavioli_docker \
-    /opt/MTMRaavioli/DockerJobs/run_long.sh \
+    /opt/Raavioli/DockerJobs/run_long.sh \
         -i /opt/config/sample_label.tsv \
         -t 8 \
         -V /opt/genomes/vector/vector.fa \

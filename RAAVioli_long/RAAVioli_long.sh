@@ -22,7 +22,7 @@ if [[ ! -f "$CONFIG_FILE" ]]; then
   exit 1
 fi
 
-ENV_NAME="RAAVioliLongRMamba_env"
+ENV_NAME="RAAVioliLong_env"
 if command -v conda >/dev/null 2>&1; then
     # Load conda shell integration
     eval "$(conda shell.bash hook)"
