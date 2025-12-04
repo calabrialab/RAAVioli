@@ -1,4 +1,0 @@
-min_aav_aln=30
-SUBOPTH=0
-OUTPUT_NAME="sim.v1"
-MERGECOL="CompleteAmplificationID"

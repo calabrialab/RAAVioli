@@ -8,3 +8,5 @@ dependencies:
   - bamtools=2.5.1
   - bedtools=2.29.1
   - r-base=4.0
+  - ruby
+  - pigz

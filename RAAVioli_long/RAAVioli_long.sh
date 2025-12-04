@@ -138,10 +138,6 @@ then
    helpFunction
 fi
 
-
-
-
-
 # checking if files exist
 if [ ! -s "$INPUT_FILE" ]
 then
@@ -213,7 +209,7 @@ fi
 if [ -z "$VIRALINDEX" ]
 then
     echo "Indexing ${VIRALGENOME}"
-    $BWA index -a bwtsw ${VIRALGENOME}
+    $BWA index ${VIRALGENOME}
 elif [ -z "$VIRALGENOME" ]
 then
     VIRALGENOME=$VIRALINDEX
