@@ -97,7 +97,7 @@ orig_columns.extend(cols)
 df_final = df[orig_columns]
 """df_final = df_final.sort_values(['chr','integration_locus','strand','GeneName',
                                          'GeneStrand','gap','junction'])"""
-df_finalnc = ['IS_genomicID','gap','junction','aav_alignments_start_end']
+df_finalnc = ['IS_genomicID','gap','junction','n_aav_aln']
 df_final.columns = df_finalnc + df_final.columns[4:].to_list()
 
 """df_final = df_final.sort_values(['chr','integration_locus','strand','GeneName',
@@ -122,7 +122,7 @@ orig_columns.extend(cols)
 df_final = df[orig_columns]
 """df_final = df_final.sort_values(['chr','integration_locus','strand','GeneName',
                                          'GeneStrand','gap','junction'])"""
-df_finalnc = ['IS_genomicID','gap','junction','aav_alignments_start_end']
+df_finalnc = ['IS_genomicID','gap','junction','n_aav_aln']
 df_final.columns = df_finalnc + df_final.columns[4:].to_list()
 
 """df_final = df_final.sort_values(['chr','integration_locus','strand','GeneName',
