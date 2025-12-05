@@ -2,11 +2,12 @@ name: RAAVioliLong_env
 channels:
   - conda-forge
   - bioconda
+channel_priority: flexible
 dependencies:
   - bwa=0.7.17
   - samtools=1.19
   - bamtools=2.5.1
   - bedtools=2.29.1
-  - r-base=4.0
+  - r-base=4.1
   - ruby
   - pigz

@@ -28,26 +28,18 @@ else
   else
     conda create -y -n "$MAMBA_ENV" -c conda-forge python=3.10 mamba
   fi
-
-  MAMBA_CMD="conda run -n $MAMBA_ENV mamba"
+  MAMBA_CMD="$(conda run -n $MAMBA_ENV which mamba)"
   echo "[INFO] Using mamba from helper environment '$MAMBA_ENV'."
 fi
 
 # --- STEP 2: CREATE OR UPDATE MAIN ENVIRONMENT ---
 if conda env list | grep -q "^$ENV_NAME\s"; then
-  echo "[INFO] Environment '$ENV_NAME' already exists. Updating it..."
-  if [[ -f "$YML_FILE" ]]; then
-    $MAMBA_CMD env update -y -n "$ENV_NAME" -f "$YML_FILE"
-  else
-    echo "[WARN] Environment file '$YML_FILE' not found. Skipping YAML update."
-  fi
-else
-  echo "[INFO] Creating new environment '$ENV_NAME'..."
-  $MAMBA_CMD create -y -n "$ENV_NAME" -c conda-forge python=3.9
-  if [[ -f "$YML_FILE" ]]; then
-    $MAMBA_CMD env update -y -n "$ENV_NAME" -f "$YML_FILE"
-  fi
+  echo "[INFO] Removing existing environment '$ENV_NAME' to avoid channel contamination..."
+  conda remove -y -n "$ENV_NAME" --all
 fi
+
+echo "[INFO] Creating new environment '$ENV_NAME' from YAML only..."
+$MAMBA_CMD env create -y -n "$ENV_NAME" -f "$YML_FILE" -c conda-forge -c bioconda
 
 # --- STEP 3: ACTIVATE MAIN ENVIRONMENT ---
 eval "$(conda shell.bash hook)"
