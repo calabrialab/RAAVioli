@@ -16,7 +16,7 @@ To build the Docker image manually:
 git clone https://github.com/calabrialab/RAAVioli.git
 docker build -t raavioli_docker .
 ```
-Alternatively, you can download the pre-built `raavioli_docker` image from Docker Hub (link).
+Alternatively, you can download the pre-built `raavioli_docker` image from Docker Hub (to be added).
 
 All Docker-ready jobs are available in the `DockerJobs` directory, showing how to run RAAVioli using containerized workflows.
 

@@ -31,5 +31,5 @@ done
 source $VARIABLES_STEPR
 mkdir -p ${OUTPUT_DIR}/final_results
 PIPEDIR=$(pwd)
-Rscript step_R.R -o ${OUTPUT_DIR} -c ${PIPEDIR} -i ${INPUT_FILE_TSV} -s ${OUTPUT_DIR}/_Summary${PREFIX}.tsv -m $min_cigar_alm_width -n $reads_all_alm_by_cigar_chimera_details_alm_size
+Rscript step_R.R -o ${OUTPUT_DIR} -c ${PIPEDIR} -i ${INPUT_FILE_TSV} -s ${OUTPUT_DIR}/_Summary${PREFIX}.tsv -m $min_cigar_alm_width
 

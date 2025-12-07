@@ -301,3 +301,21 @@ bash step2.sh ${INPUT_FILE} ${file_par_name} ${MAXTHREADS} ${PAR_FSAMTOOLS} ${MI
 
 
 bash summarize.sh $VARIABLES_VIRAL $VARIABLES_MIXED $OUTPUT_DIR $VARIABLES_STEPR $INPUT_FILE
+
+OUTDIR=$OUTPUT_DIR
+RESOURCES="${OUTDIR}/resources"
+
+
+for f in "${OUTDIR}"/*; do
+    # ignore directories
+    [ -d "$f" ] && continue
+
+    case "$f" in
+        *ext.CLEANED.tsv|*q0_reads_stats.tsv)
+            # keep these two kinds of files in OUTDIR
+            ;;
+        *)
+            mv "$f" "$RESOURCES/"
+            ;;
+    esac
+done

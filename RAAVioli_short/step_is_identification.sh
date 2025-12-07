@@ -27,7 +27,7 @@ fi
 
 for TAG in "${ASSOBCLIST[@]}"; do
 	echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET]  Searching for chimeras"
-  python3 "${RAAVIOLIDIR}/scripts/adaptive.v11.py" -i "${TMPDIR}/bam/${POOLSAID}/${TAG}.sorted.md.rel.pg.iss.bam" -F "${TMPDIR}/bam/${POOLSAID}/${TAG}.F4.sorted.md.bam" -o "${TMPDIR}/iss/${POOLSAID}/${TAG}.results" -l 50 -g 50 -s "${SUBOPTH}" -c "${CHRV_NAME}" &
+  python3 "${RAAVIOLIDIR}/scripts/adaptive.v11.py" -i "${TMPDIR}/bam/${POOLSAID}/${TAG}.sorted.md.rel.pg.iss.bam" -F "${TMPDIR}/bam/${POOLSAID}/${TAG}.F4.sorted.md.bam" -o "${TMPDIR}/iss/${POOLSAID}/${TAG}.results" -l 50 -g 50 -s "${SUBOPTH}" -c "${CHRV_NAME}" -T "${TAG}" &
 	counter=$((counter + 1))
 	if (( counter >= MAXTHREADS )); then
 		wait
@@ -87,4 +87,4 @@ then
 fi
 cp "${TMPDIR}/iss/${POOLSAID}/${final_output_name}"  "${OUTDIR_POOL_MATRIX}/"
 cp "${TMPDIR}/matrix/${POOLSAID}/"*.tsv "${OUTDIR_POOL_MATRIX}/"
-
+cat "${TMPDIR}/iss/${POOLSAID}"/*results_only_aav.tsv | gzip -c > "${OUTDIR_POOL_MATRIX}/results.${$OUTPUT_NAME}.AAV_ONLY.tsv.gz"

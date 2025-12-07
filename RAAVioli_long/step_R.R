@@ -23,8 +23,7 @@ option_list = list(
                 help="The file _Summary.*.sorted.annotated.strandness.tsv", metavar="character"),
     make_option(c("-m", "--min_cigar_alm_width"), type="integer", default=NULL, 
                 help="The file _Summary.*.sorted.annotated.strandness.tsv", metavar="integer"),
-    make_option(c("-n", "--min_alm_size"), type="integer", default=NULL, 
-                help="The file _Summary.*.sorted.annotated.strandness.tsv", metavar="integer")
+
 ); 
 
 opt_parser = OptionParser(option_list=option_list);

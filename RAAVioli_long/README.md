@@ -122,6 +122,31 @@ Depending on the source pfo your reads you can change the parameters as suggeste
 ___AS score is setted very high since we worked with PacBio high fidelity reads___
 you can lower it to get more "results" but expect them to be noiser.
 
+#### variables_rscript
+Currently, only min_cigar_alm_width is defined in this file.
+This parameter sets the minimum size of an individual CIGAR operation (OP) that should be kept.
+Any OP shorter than this threshold is removed during parsing.
+
+You should choose this parameter in relation to the previous filtering steps.
+For example, when using a very strict alignment filter (e.g., AS = 800), setting a low min_cigar_alm_width will usually have no effect.
+However, if you relax the alignment parameters in variables_mixed, this value may start to matter.
+
+If you instead set AS = 30, you may want to increase min_cigar_alm_width to be more stringent in the final step.
+
+Note that this parameter applies to each individual CIGAR operation, not the entire alignment.
+Therefore, an alignment containing only small operations may be discarded.
+For example, in a CIGAR such as:
+```
+10M3I20M5D5M …
+```
+
+none of the operations is ≥ 30.
+If min_cigar_alm_width = 30, all of them will be removed and the entire alignment will be discarded.
+This behavior helps avoid producing strange or fragmented reconstructions from rearranged vectors.
+
+Although setting this parameter low typically does not affect long-read datasets with high AS filtering,
+you may need to reduce it when working with short-read datasets (e.g., WGS), where CIGAR operations tend to be smaller.
+
 ## OUTPUT
 The main output is a _Summary file that reports detailed information for every read.
 Each read may appear multiple times, depending on the number of alignments it produces. For example, 
@@ -133,9 +158,7 @@ For each alignment, the file includes:
 
 * the genomic start and end coordinates
 
-* query_start and query_end, indicating where the aligned segment lies within the read
-
-* (these fields allow reconstruction of the alignment structure)
+* query_start and query_end, indicating where the aligned segment lies within the read these fields allow reconstruction of the alignment structure)
 
 * gene annotation
 
