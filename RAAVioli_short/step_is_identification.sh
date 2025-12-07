@@ -87,4 +87,4 @@ then
 fi
 cp "${TMPDIR}/iss/${POOLSAID}/${final_output_name}"  "${OUTDIR_POOL_MATRIX}/"
 cp "${TMPDIR}/matrix/${POOLSAID}/"*.tsv "${OUTDIR_POOL_MATRIX}/"
-cat "${TMPDIR}/iss/${POOLSAID}"/*results_only_aav.tsv | gzip -c > "${OUTDIR_POOL_MATRIX}/results.${$OUTPUT_NAME}.AAV_ONLY.tsv.gz"
+cat "${TMPDIR}/iss/${POOLSAID}"/*results_only_aav.tsv | gzip -c > "${OUTDIR_POOL_MATRIX}/results.${OUTPUT_NAME}.AAV_ONLY.tsv.gz"

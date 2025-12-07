@@ -22,7 +22,7 @@ option_list = list(
     make_option(c("-s", "--summary"), type="character", default=NULL, 
                 help="The file _Summary.*.sorted.annotated.strandness.tsv", metavar="character"),
     make_option(c("-m", "--min_cigar_alm_width"), type="integer", default=NULL, 
-                help="The file _Summary.*.sorted.annotated.strandness.tsv", metavar="integer"),
+                help="The file _Summary.*.sorted.annotated.strandness.tsv", metavar="integer")
 
 ); 
 
