@@ -1,8 +1,8 @@
 # Docker Jobs
 This directory contains the 3 Docker jobs you can run inside docker.
 
-- [Create Mixed Genome](#create-mixed-genome)
-- [Run RAAVioli Short]((#running-raavioli-on-short-read-data))
+- [Create Mixed Genome](#creating-the-mixed-Genome)
+- [Run RAAVioli Short](#running-raavioli-on-short-read-data)
 - [Run RAAVioli Long](#running-raavioli-on-long-read-data)
 
 _When you run RAAVioli trough docker, you need to specify in the config
@@ -134,7 +134,7 @@ docker run -d --name job_short \
 ---
 
 ---
-## Running RAAVioli on Long-Read Data (RAAVioli_long)
+## Running RAAVioli on Long-Read Data
 
 RAAVioli_long requires several input files (FASTQs, genome indices, annotation, and
 variables files) whose locations must be provided to `RAAVioli_long.sh`.

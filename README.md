@@ -45,7 +45,8 @@ chmod +x mamba_setup.sh
 ./mamba_setup.sh
 ```
 ### Examples
-Simulated data, example configurations, and scripts used in the MTM publication are available in a separate repository: MTMRaavioli (link).
+Simulated data, example configurations, and scripts used in the MTM publication are available in the repository: MTMRaavioli
+https://github.com/calabrialab/MTMRAAVioli.git.
 
 ---
 
