@@ -530,6 +530,7 @@ except:
 cols_to_drop = ["from_junc_to_plusN", "from_junc_to_plus20","from_minusN_to_IS"]
 if not df_r1.empty:
     df_r1.drop(cols_to_drop, axis=1, inplace=True)
+    df_r1['tag'] = tag_sample
     df_r1.to_csv(output + ".R1.tsv", sep="\t", index=False)
 
 df_only_aav = pd.DataFrame(list_only_rear)

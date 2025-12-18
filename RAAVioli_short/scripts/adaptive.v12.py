@@ -187,6 +187,8 @@ parser.add_argument('-l', '--lower_gap', help='maximum negative gap accepted')
 parser.add_argument('-g', '--higher_gap', help='maximum positive gap accepted')
 parser.add_argument('-s', '--suboptimal_thr', help='Suboptimal threshold for the delta XS/AS')
 parser.add_argument('-c', '--chr_vector_string', help='vector chromosome name', default="chrV")
+parser.add_argument('-T', '--tag', help='tag sample')
+
 # parser.add_arxgument('-R', '--input_F320', help='input F320 bam file')
 args = parser.parse_args()
 file = args.input
@@ -197,7 +199,7 @@ output = args.output
 max_gap = int(args.higher_gap)
 min_gap = -int(args.lower_gap)
 suboptimalThreshold = int(args.suboptimal_thr)
-
+tag_sample = args.tag
 aav_gap_threshold = 50
 
 # MEMORY-OPTIMIZED STRUCTURES
@@ -576,15 +578,20 @@ try:
     df_r1['GCperc'] = df_r1.seq_gap.apply(lambda x: (x.count('G') + x.count('C')) / len(x) if len(x) > 3 else None)
 except Exception:
     pass
+cols_to_drop = ["from_junc_to_plusN", "from_junc_to_plus20","from_minusN_to_IS"]
 if not df_r1.empty:
+    df_r1.drop(cols_to_drop, axis=1, inplace=True)
+    df_r1['tag'] = tag_sample
     df_r1.to_csv(output + ".R1.tsv", sep="\t", index=False)
 
 df_only_aav = pd.DataFrame(list_only_rear)
 if not df_only_aav.empty:
+    df_only_aav['tag'] = tag_sample
+    df_only_aav['n_aav_aln'] = df_only_aav['aav_alignments_start_end'].apply(lambda x: x.count(";")+1)
     df_only_aav[
-        ['name', 'aav_last_start', 'aav_last_end', 'aav_last_strand', 'aav_alignments', 'aav_alignments_start_end',
-         'input_file', 'start_aav', 'read_length', 'alignment_on_query']].to_csv(output + "_only_aav.tsv", sep="\t",
-                                                                                index=False)
+        ['name', 'tag','n_aav_aln', 'aav_alignments_start_end','alignment_on_query', 'aav_last_start', 'aav_last_end', 'aav_last_strand', 'aav_alignments',
+         'input_file', 'start_aav','read_length']].to_csv(output + "_only_aav.tsv", sep="\t", index=False)
+
 df_noresults = pd.DataFrame(list_results_no_integration)
 if not df_noresults.empty:
     df_noresults.to_csv(output + "_noresults.tsv", sep="\t", index=False)

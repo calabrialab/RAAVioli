@@ -27,7 +27,7 @@ fi
 
 for TAG in "${ASSOBCLIST[@]}"; do
 	echo "<`date +'%Y-%m-%d %H:%M:%S'`> [TIGET]  Searching for chimeras"
-  python3 "${RAAVIOLIDIR}/scripts/adaptive.v11.py" -i "${TMPDIR}/bam/${POOLSAID}/${TAG}.sorted.md.rel.pg.iss.bam" -F "${TMPDIR}/bam/${POOLSAID}/${TAG}.F4.sorted.md.bam" -o "${TMPDIR}/iss/${POOLSAID}/${TAG}.results" -l 50 -g 50 -s "${SUBOPTH}" -c "${CHRV_NAME}" -T "${TAG}" &
+  python3 "${RAAVIOLIDIR}/scripts/adaptive.v12.py" -i "${TMPDIR}/bam/${POOLSAID}/${TAG}.sorted.md.rel.pg.iss.bam" -F "${TMPDIR}/bam/${POOLSAID}/${TAG}.F4.sorted.md.bam" -o "${TMPDIR}/iss/${POOLSAID}/${TAG}.results" -l 50 -g 50 -s "${SUBOPTH}" -c "${CHRV_NAME}" -T "${TAG}" &
 	counter=$((counter + 1))
 	if (( counter >= MAXTHREADS )); then
 		wait

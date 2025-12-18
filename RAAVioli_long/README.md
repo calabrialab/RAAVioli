@@ -148,7 +148,7 @@ Although setting this parameter low typically does not affect long-read datasets
 you may need to reduce it when working with short-read datasets (e.g., WGS), where CIGAR operations tend to be smaller.
 
 ## OUTPUT
-The main output is a _Summary file that reports detailed information for every read.
+The main output is a _Summary*.CIGAR_parsed.grouped.ext.CLEANED.tsv file that reports detailed information for every read.
 Each read may appear multiple times, depending on the number of alignments it produces. For example, 
 if a read contains both a vector rearrangement and an integration-site (IS) locus, it will appear
 three times: twice for the alignments on chrV and once for the alignment on the host chromosome associated 
