@@ -1,5 +1,5 @@
 import sys
-
+import resource
 import pysam
 import pandas as pd
 import argparse
@@ -19,7 +19,6 @@ def checkNoRepeats(read_name, target_chr, target_start, r1_to_check, suboptimalT
                 return False
             else:
                 return True
-    print("WTF: ", read_name)
     return False
 def getListFromCigar2(cigar):
     '''
@@ -614,7 +613,8 @@ print(output, "R2 parsed")
 
 print(output, " FINISHED")
 
-
+usage = resource.getrusage(resource.RUSAGE_SELF)
+print(tag_sample, "Max RSS (KB):", usage.ru_maxrss)
 
 
 

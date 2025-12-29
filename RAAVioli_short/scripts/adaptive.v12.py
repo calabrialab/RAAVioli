@@ -1,5 +1,5 @@
 import sys
-
+import resource
 import pysam
 import pandas as pd
 import argparse
@@ -28,7 +28,6 @@ def checkNoRepeats(read_name, target_chr, target_start, r1_to_check, suboptimalT
             else:
                 # If AS/XS are not present, original code treated this as valid
                 return True
-    print("WTF: ", read_name)
     return False
 
 
@@ -671,3 +670,6 @@ with open(output + "noR2.log", "w") as logs:
 print(output, "R2 parsed")
 
 print(output, " FINISHED")
+
+usage = resource.getrusage(resource.RUSAGE_SELF)
+print(tag_sample, "Max RSS (KB):", usage.ru_maxrss)
