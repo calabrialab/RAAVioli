@@ -3,6 +3,12 @@ _Recombinant Adeno-Associated Viral IntegratiOn anaLysIs (RAAVIoli)_
 
 Bioinformatics pipeline for the identification and characterization of AAV integration sites and viral rearrangements.
 
+Publication: 
+Cipriani, Carlo et al.
+_RAAVioli: A comprehensive approach to characterizing AAV vector integrations and rearrangements_
+Molecular Therapy Advances, Volume 34, Issue 1, 201659
+[https://www.cell.com/molecular-therapy-family/advances/fulltext/S3117-387X(25)00009-6]
+
 ---
 
 ## Install
